@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ExternalLink, FileText, Maximize2, ScrollText } from 'lucide-react';
 import type { ExamSection } from '../lib/exams';
-import { publicAssetUrl } from '../lib/assetUrl';
+import { pdfReaderHref, publicAssetUrl } from '../lib/assetUrl';
 import { PdfCanvasViewer } from './PdfCanvasViewer';
 
 interface SourceReaderProps {
@@ -15,7 +15,7 @@ export function SourceReader({ section, sourceUrl, title, compact = false }: Sou
   const [mode, setMode] = useState<'text' | 'pdf'>('text');
   const page = section?.pdfPageStart ?? 1;
   const pdfUrl = useMemo(() => publicAssetUrl(sourceUrl), [sourceUrl]);
-  const pdfPageUrl = useMemo(() => `${pdfUrl}#page=${page}`, [pdfUrl, page]);
+  const readerPageUrl = useMemo(() => pdfReaderHref(sourceUrl, { page, title }), [page, sourceUrl, title]);
 
   return (
     <aside className={`source-reader${compact ? ' source-reader--compact' : ''}`} aria-label="نص السؤال">
@@ -33,7 +33,7 @@ export function SourceReader({ section, sourceUrl, title, compact = false }: Sou
               <FileText size={16} /> PDF
             </button>
           </div>
-          <a className="icon-button icon-button--small" href={pdfPageUrl} target="_blank" rel="noreferrer" title={`فتح الملف في نافذة جديدة عند الصفحة ${page}`}>
+          <a className="icon-button icon-button--small" href={readerPageUrl} target="_blank" rel="noreferrer" title={`فتح الملف في نافذة جديدة عند الصفحة ${page}`}>
             <Maximize2 size={17} /><span>فتح</span>
           </a>
         </div>
@@ -53,8 +53,8 @@ export function SourceReader({ section, sourceUrl, title, compact = false }: Sou
       ) : (
         <div className="source-reader__pdf">
           <PdfCanvasViewer url={pdfUrl} title={title} initialPage={page} />
-          <a className="pdf-fallback" href={pdfPageUrl} target="_blank" rel="noreferrer">
-            <ExternalLink size={15} /> فتح الملف الأصلي عند الصفحة {page}
+          <a className="pdf-fallback" href={readerPageUrl} target="_blank" rel="noreferrer">
+            <ExternalLink size={15} /> فتح الملف في صفحة قراءة موسعة عند الصفحة {page}
           </a>
         </div>
       )}

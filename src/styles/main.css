@@ -650,6 +650,16 @@
   .exam-choices legend { color: var(--ink-2); font-weight: 800; margin-bottom: .55rem; }
   .mobile-reader-tabs, .mobile-continue { display: none; }
 
+  .pdf-reader-page { width: min(1680px, calc(100% - 24px)); margin-inline: auto; padding-block: 1rem 1.5rem; display: grid; gap: 1rem; min-height: calc(100dvh - var(--header)); }
+  .pdf-reader-page__header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-1); padding: 1rem 1.2rem; }
+  .pdf-reader-page__header h1 { font-size: clamp(1.35rem, 2.5vw, 2rem); margin-top: .2rem; }
+  .pdf-reader-page__header p { color: var(--muted); margin-top: .35rem; }
+  .pdf-reader-page__actions { display: flex; align-items: center; justify-content: flex-end; gap: .55rem; flex-wrap: wrap; }
+  .pdf-reader-page__viewer { min-height: calc(100dvh - var(--header) - 150px); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-2); background: #dcd6e8; }
+  .pdf-reader-page__viewer .pdf-viewer { min-height: calc(100dvh - var(--header) - 150px); }
+  .pdf-reader-error { min-height: 60dvh; display: grid; place-items: center; align-content: center; gap: .65rem; text-align: center; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-2); color: var(--danger); padding: 1.5rem; }
+  .pdf-reader-error p { color: var(--muted); }
+
   .source-reader--compact { min-height: 500px; }
 }
 
@@ -679,6 +689,11 @@
   }
 
   @media (max-width: 560px) {
+    .pdf-reader-page { width: min(100% - 12px, 1680px); padding-block: .5rem; }
+    .pdf-reader-page__header { align-items: stretch; flex-direction: column; padding: .85rem; }
+    .pdf-reader-page__actions { display: grid; grid-template-columns: 1fr; }
+    .pdf-reader-page__actions > * { width: 100%; }
+    .pdf-reader-page__viewer, .pdf-reader-page__viewer .pdf-viewer { min-height: 75dvh; }
     .coverage-banner { grid-template-columns: 1fr; }
     .source-reader__header { flex-direction: column; }
     .source-reader__actions { width: 100%; justify-content: space-between; }

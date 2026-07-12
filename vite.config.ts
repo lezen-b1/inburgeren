@@ -31,12 +31,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff2}'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        navigateFallbackDenylist: [/\/sources\//, /\.pdf$/i],
         runtimeCaching: [
-          {
-            urlPattern: ({ request }) => request.destination === 'document',
-            handler: 'NetworkFirst',
-            options: { cacheName: 'nt2-pages', networkTimeoutSeconds: 4 }
-          },
           {
             urlPattern: ({ url }) => url.pathname.endsWith('.pdf'),
             handler: 'CacheFirst',
@@ -46,6 +42,11 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
               rangeRequests: true
             }
+          },
+          {
+            urlPattern: ({ request, url }) => request.destination === 'document' && !url.pathname.includes('/sources/') && !url.pathname.endsWith('.pdf'),
+            handler: 'NetworkFirst',
+            options: { cacheName: 'nt2-pages', networkTimeoutSeconds: 4 }
           }
         ]
       }

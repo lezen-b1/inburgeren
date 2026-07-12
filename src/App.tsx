@@ -11,6 +11,7 @@ const TrainingPage = lazy(() => import('./pages/TrainingPage').then((module) => 
 const ProgressPage = lazy(() => import('./pages/ProgressPage').then((module) => ({ default: module.ProgressPage })));
 const SettingsPage = lazy(() => import('./pages/SettingsPage').then((module) => ({ default: module.SettingsPage })));
 const SourcesPage = lazy(() => import('./pages/SourcesPage').then((module) => ({ default: module.SourcesPage })));
+const PdfReaderPage = lazy(() => import('./pages/PdfReaderPage').then((module) => ({ default: module.PdfReaderPage })));
 
 function RouteLoading() {
   return <section className="section shell"><div className="loading-card">جارٍ تحميل الصفحة…</div></section>;
@@ -43,6 +44,7 @@ export function App() {
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/sources" element={<SourcesPage />} />
+          <Route path="/pdf" element={<PdfReaderPage />} />
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </Suspense>

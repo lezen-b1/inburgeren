@@ -1,18 +1,16 @@
-import { ArrowLeft, BookOpenCheck, FileText, GraduationCap, LibraryBig, Wrench } from 'lucide-react';
+import { ArrowLeft, BookOpenCheck, FileText, LibraryBig, Wrench } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { publicAssetUrl } from '../lib/assetUrl';
+import { pdfReaderHref } from '../lib/assetUrl';
 import { examModelById, sourceDocuments } from '../lib/exams';
 
 const categoryLabels = {
   'official-exam': 'نماذج رسمية',
-  practice: 'نماذج تدريبية حديثة',
   collection: 'مجموعات',
   techniques: 'تقنيات القراءة',
 } as const;
 
 const categoryIcons = {
   'official-exam': BookOpenCheck,
-  practice: GraduationCap,
   collection: LibraryBig,
   techniques: Wrench,
 } as const;
@@ -40,7 +38,6 @@ export function ModelsPage() {
       <div className="coverage-banner">
         <div><strong>178</strong><span>سؤالًا رسميًا موثقًا 2020–2024</span></div>
         <div><strong>19/35</strong><span>تغطية 2025 التفاعلية</span></div>
-        <div><strong>3</strong><span>مجموعات تدريب حديثة 2025</span></div>
         <div><strong>النص ظاهر</strong><span>قبل الاختيار، وليس بعده</span></div>
       </div>
 
@@ -85,8 +82,8 @@ export function ModelsPage() {
                           ابدأ التدريب <ArrowLeft size={17} />
                         </Link>
                       )}
-                      <a className="button button--secondary" href={publicAssetUrl(doc.sourceUrl)} target="_blank" rel="noreferrer">فتح PDF</a>
-                      {doc.answerUrl && <a className="text-link" href={publicAssetUrl(doc.answerUrl)} target="_blank" rel="noreferrer">مفتاح الإجابة</a>}
+                      <a className="button button--secondary" href={pdfReaderHref(doc.sourceUrl, { title: doc.title })} target="_blank" rel="noreferrer">فتح PDF</a>
+                      {doc.answerUrl && <a className="text-link" href={pdfReaderHref(doc.answerUrl, { title: `${doc.title} — مفتاح الإجابة` })} target="_blank" rel="noreferrer">مفتاح الإجابة</a>}
                     </div>
                   </article>
                 );

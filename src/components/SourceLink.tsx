@@ -1,10 +1,10 @@
 import { ExternalLink } from 'lucide-react';
 import type { Example } from '../lib/schema';
-import { publicAssetUrl } from '../lib/assetUrl';
+import { pdfReaderHref } from '../lib/assetUrl';
 
 export function SourceLink({ example, compact = false }: { example: Example; compact?: boolean }) {
   const page = example.source.evidencePage;
-  const href = publicAssetUrl(example.source.url);
+  const href = pdfReaderHref(example.source.url, { page, title: example.source.label });
   return (
     <a
       className={compact ? 'source-link source-link--compact' : 'source-link'}
