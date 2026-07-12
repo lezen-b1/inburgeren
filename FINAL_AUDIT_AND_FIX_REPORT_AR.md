@@ -145,7 +145,6 @@ Build ناجح عبر Vite.
 
 أكبر ملف معروف:
 
-- `reading-techniques.pdf`: 19,293,738 bytes.
 
 ملف 2025:
 

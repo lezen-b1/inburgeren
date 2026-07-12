@@ -85,7 +85,7 @@ export const SourceDocumentSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   year: z.number().int().min(2020).max(2030).nullable(),
-  category: z.enum(['official-exam', 'practice', 'collection', 'techniques']),
+  category: z.enum(['official-exam', 'practice', 'collection']),
   description: z.string().min(1),
   sourceUrl: z.string().min(1),
   answerUrl: z.string().min(1).optional(),

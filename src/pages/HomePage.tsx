@@ -1,7 +1,8 @@
-import { ArrowLeft, BookOpenText, Brain, CheckCircle2, Layers3, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpenText, Brain, CheckCircle2, Gamepad2, Layers3, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { examples, skillLabels } from '../lib/data';
 import { useProgress } from '../lib/ProgressContext';
+import { paraphrasePairs } from '../lib/paraphrasePairs';
 import { usePageMeta } from '../lib/pageMeta';
 
 export function HomePage() {
@@ -31,11 +32,14 @@ export function HomePage() {
               <Link className="button button--secondary button--large" to="/models">
                 افتح النماذج
               </Link>
+              <Link className="button button--light button--large" to="/phrases">
+                <Gamepad2 size={18} aria-hidden="true" /> لعبة العبارات
+              </Link>
             </div>
             <div className="hero-modern__metrics" aria-label="ملخص المحتوى">
               <div><strong>213</strong><span>سؤالًا رسميًا مهيكلًا</span></div>
               <div><strong>2020–2025</strong><span>نماذج رسمية كاملة</span></div>
-              <div><strong>{examples.length}</strong><span>تحليل إعادة صياغة</span></div>
+              <div><strong>{paraphrasePairs.length}</strong><span>علاقة لغوية للتدريب اليومي</span></div>
             </div>
           </div>
 
@@ -57,6 +61,7 @@ export function HomePage() {
               <CheckCircle2 size={20} aria-hidden="true" />
               <span>الكلمات مختلفة، لكن المعنى: يبذل جهدًا كبيرًا.</span>
             </div>
+            <Link className="hero-demo-card__link" to="/phrases">تعلّم جميع العبارات كلعبة يومية <ArrowLeft size={16} /></Link>
           </div>
         </div>
       </section>

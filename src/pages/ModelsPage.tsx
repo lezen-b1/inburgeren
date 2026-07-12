@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpenCheck, FileText, LibraryBig, Wrench } from 'lucide-react';
+import { ArrowLeft, BookOpenCheck, FileText, LibraryBig } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { publicAssetUrl } from '../lib/assetUrl';
 import { examModelById, sourceDocuments } from '../lib/exams';
@@ -7,13 +7,11 @@ import { usePageMeta } from '../lib/pageMeta';
 const categoryLabels = {
   'official-exam': 'نماذج رسمية',
   collection: 'مجموعات',
-  techniques: 'تقنيات القراءة',
 } as const;
 
 const categoryIcons = {
   'official-exam': BookOpenCheck,
   collection: LibraryBig,
-  techniques: Wrench,
 } as const;
 
 export function ModelsPage() {

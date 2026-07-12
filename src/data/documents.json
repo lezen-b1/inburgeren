@@ -91,14 +91,5 @@
     "description": "مجموعة تدريبية موسعة تحتوي عدة نصوص وأسئلة.",
     "sourceUrl": "./sources/practice-2025-c.pdf",
     "status": "document"
-  },
-  {
-    "id": "reading-techniques",
-    "title": "Technieken Lezen",
-    "year": null,
-    "category": "techniques",
-    "description": "دليل تقنيات القراءة والبحث عن الإجابة داخل النص.",
-    "sourceUrl": "./sources/reading-techniques.pdf",
-    "status": "document"
   }
 ]

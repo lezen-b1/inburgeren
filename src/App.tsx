@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
 import { dataError } from './lib/data';
@@ -8,6 +8,7 @@ const LibraryPage = lazy(() => import('./pages/LibraryPage').then((module) => ({
 const ModelsPage = lazy(() => import('./pages/ModelsPage').then((module) => ({ default: module.ModelsPage })));
 const ExamPage = lazy(() => import('./pages/ExamPage').then((module) => ({ default: module.ExamPage })));
 const TrainingPage = lazy(() => import('./pages/TrainingPage').then((module) => ({ default: module.TrainingPage })));
+const ParaphraseGamePage = lazy(() => import('./pages/ParaphraseGamePage').then((module) => ({ default: module.ParaphraseGamePage })));
 const ProgressPage = lazy(() => import('./pages/ProgressPage').then((module) => ({ default: module.ProgressPage })));
 const SettingsPage = lazy(() => import('./pages/SettingsPage').then((module) => ({ default: module.SettingsPage })));
 const SourcesPage = lazy(() => import('./pages/SourcesPage').then((module) => ({ default: module.SourcesPage })));
@@ -42,10 +43,10 @@ export function App() {
           <Route path="/models" element={<ModelsPage />} />
           <Route path="/models/:modelId" element={<ExamPage />} />
           <Route path="/train" element={<TrainingPage />} />
+          <Route path="/phrases" element={<ParaphraseGamePage />} />
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/sources" element={<SourcesPage />} />
-          <Route path="/techniques" element={<Navigate to="/pdf-viewer?document=reading-techniques&page=1" replace />} />
           <Route path="/pdf-viewer" element={<PdfViewerPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
