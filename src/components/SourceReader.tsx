@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ExternalLink, FileText, Maximize2, ScrollText } from 'lucide-react';
-import type { ExamSection } from '../lib/exams';
-import { pdfReaderHref, publicAssetUrl } from '../lib/assetUrl';
-import { PdfCanvasViewer } from './PdfCanvasViewer';
+import { sourceDocuments, type ExamSection } from '../lib/exams';
+import { publicAssetUrl } from '../lib/assetUrl';
 
 interface SourceReaderProps {
   section: ExamSection | null;
@@ -15,7 +14,11 @@ export function SourceReader({ section, sourceUrl, title, compact = false }: Sou
   const [mode, setMode] = useState<'text' | 'pdf'>('text');
   const page = section?.pdfPageStart ?? 1;
   const pdfUrl = useMemo(() => publicAssetUrl(sourceUrl), [sourceUrl]);
-  const readerPageUrl = useMemo(() => pdfReaderHref(sourceUrl, { page, title }), [page, sourceUrl, title]);
+  const viewerUrl = useMemo(() => {
+    const document = sourceDocuments.find((item) => item.sourceUrl === sourceUrl);
+    const params = new URLSearchParams({ document: document?.id ?? sourceUrl, page: String(page) });
+    return `/pdf-viewer?${params.toString()}`;
+  }, [page, sourceUrl]);
 
   return (
     <aside className={`source-reader${compact ? ' source-reader--compact' : ''}`} aria-label="نص السؤال">
@@ -33,7 +36,7 @@ export function SourceReader({ section, sourceUrl, title, compact = false }: Sou
               <FileText size={16} /> PDF
             </button>
           </div>
-          <a className="icon-button icon-button--small" href={readerPageUrl} target="_blank" rel="noreferrer" title={`فتح الملف في نافذة جديدة عند الصفحة ${page}`}>
+          <a className="icon-button icon-button--small" href={`#${viewerUrl}`} target="_blank" rel="noopener noreferrer" title={`فتح عارض PDF، الصفحة ${page}`}>
             <Maximize2 size={17} /><span>فتح</span>
           </a>
         </div>
@@ -52,9 +55,12 @@ export function SourceReader({ section, sourceUrl, title, compact = false }: Sou
         </div>
       ) : (
         <div className="source-reader__pdf">
-          <PdfCanvasViewer url={pdfUrl} title={title} initialPage={page} />
-          <a className="pdf-fallback" href={readerPageUrl} target="_blank" rel="noreferrer">
-            <ExternalLink size={15} /> فتح الملف في صفحة قراءة موسعة عند الصفحة {page}
+          <object key={pdfUrl} data={pdfUrl} type="application/pdf" title={`PDF: ${title}`}>
+            <iframe src={pdfUrl} title={`PDF: ${title}`} loading="lazy" />
+          </object>
+          <p className="pdf-page-note">إذا فُتح الملف من بدايته، انتقل إلى الصفحة {page}.</p>
+          <a className="pdf-fallback" href={pdfUrl} target="_blank" rel="noreferrer">
+            إذا لم يظهر PDF على هاتفك، اضغط هنا لفتحه في نافذة جديدة.
           </a>
         </div>
       )}

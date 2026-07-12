@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, CheckCircle2, CircleAlert, FileQuestion, RotateCcw } from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { SourceReader } from '../components/SourceReader';
-import { pdfReaderHref } from '../lib/assetUrl';
+import { publicAssetUrl } from '../lib/assetUrl';
 import { abandonExamSession, getIncompleteExamSession, putExamSession, type ExamSessionRecord } from '../lib/db';
 import { calculateExamSummary, emptyExamAnswerRecord, registerExamAttempt, type ExamAnswerRecord } from '../lib/examScoring';
 import { examDataError, examModelById, type ExamQuestion, type ExamSection } from '../lib/exams';
+import { usePageMeta } from '../lib/pageMeta';
 
 interface FlatQuestion {
   section: ExamSection;
@@ -37,6 +38,7 @@ function answerFor(session: ExamSessionRecord | null, questionId: string): ExamA
 export function ExamPage() {
   const { modelId } = useParams();
   const model = modelId ? examModelById.get(modelId) : null;
+  usePageMeta(model ? `نموذج ${model.year}` : 'نموذج غير موجود');
   const [sectionId, setSectionId] = useState<string>('all');
   const [session, setSession] = useState<ExamSessionRecord | null>(null);
   const [pendingSession, setPendingSession] = useState<ExamSessionRecord | null>(null);
@@ -213,7 +215,7 @@ export function ExamPage() {
   const progress = ((session.currentIndex + 1) / queue.length) * 100;
   const answerText = current.question.answer ?? `${current.question.correctOption}. ${current.question.options.find((option) => option.label === current.question.correctOption)?.text ?? ''}`;
   const pdfPage = current.question.evidencePage ?? current.section.pdfPageStart ?? 1;
-  const sourceHref = pdfReaderHref(model.sourceUrl, { page: pdfPage, title: `${model.title} — ${current.section.title}` });
+  const sourceHref = publicAssetUrl(model.sourceUrl);
 
   return (
     <section className="section shell exam-page">

@@ -2,8 +2,10 @@ import { ArrowLeft, BookOpenText, Brain, CheckCircle2, Layers3, Sparkles } from 
 import { Link } from 'react-router-dom';
 import { examples, skillLabels } from '../lib/data';
 import { useProgress } from '../lib/ProgressContext';
+import { usePageMeta } from '../lib/pageMeta';
 
 export function HomePage() {
+  usePageMeta('الرئيسية');
   const { progress, ready } = useProgress();
   const rows = Object.values(progress);
   const mastered = rows.filter((row) => row.mastered).length;
@@ -31,8 +33,8 @@ export function HomePage() {
               </Link>
             </div>
             <div className="hero-modern__metrics" aria-label="ملخص المحتوى">
-              <div><strong>197</strong><span>سؤالًا/مسألة مهيكلة</span></div>
-              <div><strong>2020–2025</strong><span>نماذج رسمية، و2025 جزئي</span></div>
+              <div><strong>213</strong><span>سؤالًا رسميًا مهيكلًا</span></div>
+              <div><strong>2020–2025</strong><span>نماذج رسمية كاملة</span></div>
               <div><strong>{examples.length}</strong><span>تحليل إعادة صياغة</span></div>
             </div>
           </div>

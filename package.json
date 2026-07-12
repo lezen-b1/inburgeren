@@ -1,19 +1,19 @@
 {
   "name": "nt2-lezen-b1-comprehensive",
   "private": true,
-  "version": "4.0.1",
+  "version": "4.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
+    "content:report": "node scripts/generate-content-report.mjs",
     "check": "tsc -b --pretty false && vitest run"
   },
   "dependencies": {
     "idb": "8.0.3",
     "lucide-react": "1.24.0",
-    "pdfjs-dist": "6.1.200",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-router-dom": "7.18.1",

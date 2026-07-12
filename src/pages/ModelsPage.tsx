@@ -1,7 +1,8 @@
 import { ArrowLeft, BookOpenCheck, FileText, LibraryBig, Wrench } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { pdfReaderHref } from '../lib/assetUrl';
+import { publicAssetUrl } from '../lib/assetUrl';
 import { examModelById, sourceDocuments } from '../lib/exams';
+import { usePageMeta } from '../lib/pageMeta';
 
 const categoryLabels = {
   'official-exam': 'نماذج رسمية',
@@ -16,10 +17,11 @@ const categoryIcons = {
 } as const;
 
 export function ModelsPage() {
+  usePageMeta('النماذج');
   const groups = Object.entries(categoryLabels).map(([category, label]) => ({
     category: category as keyof typeof categoryLabels,
     label,
-    documents: sourceDocuments.filter((doc) => doc.category === category),
+    documents: sourceDocuments.filter((doc) => doc.category === category && doc.category !== 'practice'),
   })).filter((group) => group.documents.length);
 
   return (
@@ -29,7 +31,7 @@ export function ModelsPage() {
           <span className="section-kicker">كل المواد في مكان واحد</span>
           <h1>النماذج وملفات القراءة</h1>
           <p>
-            النماذج الرسمية 2020–2024 متاحة كتدريب تفاعلي كامل، ونموذج 2025 متاح جزئيًا وفق البيانات الموثقة داخل قاعدة المشروع.
+            النماذج الرسمية 2020–2025 متاحة كتدريب تفاعلي كامل من حيث السؤال والاختيارات ومفتاح الإجابة الرسمي.
             لا تُضاف أسئلة أو اختيارات أو أدلة غير موجودة في ملفات المصدر.
           </p>
         </div>
@@ -37,7 +39,8 @@ export function ModelsPage() {
 
       <div className="coverage-banner">
         <div><strong>178</strong><span>سؤالًا رسميًا موثقًا 2020–2024</span></div>
-        <div><strong>19/35</strong><span>تغطية 2025 التفاعلية</span></div>
+        <div><strong>35/35</strong><span>تغطية 2025 التفاعلية</span></div>
+        <div><strong>90</strong><span>أمثلة مكتبة إعادة الصياغة</span></div>
         <div><strong>النص ظاهر</strong><span>قبل الاختيار، وليس بعده</span></div>
       </div>
 
@@ -82,8 +85,8 @@ export function ModelsPage() {
                           ابدأ التدريب <ArrowLeft size={17} />
                         </Link>
                       )}
-                      <a className="button button--secondary" href={pdfReaderHref(doc.sourceUrl, { title: doc.title })} target="_blank" rel="noreferrer">فتح PDF</a>
-                      {doc.answerUrl && <a className="text-link" href={pdfReaderHref(doc.answerUrl, { title: `${doc.title} — مفتاح الإجابة` })} target="_blank" rel="noreferrer">مفتاح الإجابة</a>}
+                      <a className="button button--secondary" href={publicAssetUrl(doc.sourceUrl)} target="_blank" rel="noreferrer">فتح PDF</a>
+                      {doc.answerUrl && <a className="text-link" href={publicAssetUrl(doc.answerUrl)} target="_blank" rel="noreferrer">مفتاح الإجابة</a>}
                     </div>
                   </article>
                 );

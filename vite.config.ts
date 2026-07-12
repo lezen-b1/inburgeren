@@ -21,7 +21,8 @@ export default defineConfig({
         orientation: 'portrait-primary',
         theme_color: '#2e1065',
         background_color: '#f8f7fc',
-        start_url: './#/home',
+        start_url: '/inburgeren/#/home',
+        scope: '/inburgeren/',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
@@ -31,22 +32,20 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff2}'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
-        navigateFallbackDenylist: [/\/sources\//, /\.pdf$/i],
         runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'document',
+            handler: 'NetworkFirst',
+            options: { cacheName: 'nt2-pages', networkTimeoutSeconds: 4 }
+          },
           {
             urlPattern: ({ url }) => url.pathname.endsWith('.pdf'),
             handler: 'CacheFirst',
             options: {
               cacheName: 'nt2-source-pdfs',
               expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 30 },
-              cacheableResponse: { statuses: [0, 200] },
-              rangeRequests: true
+              cacheableResponse: { statuses: [0, 200] }
             }
-          },
-          {
-            urlPattern: ({ request, url }) => request.destination === 'document' && !url.pathname.includes('/sources/') && !url.pathname.endsWith('.pdf'),
-            handler: 'NetworkFirst',
-            options: { cacheName: 'nt2-pages', networkTimeoutSeconds: 4 }
           }
         ]
       }

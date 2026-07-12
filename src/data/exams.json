@@ -4181,10 +4181,10 @@
     "year": 2025,
     "title": "Openbaar examen Lezen I 2025",
     "kind": "official",
-    "status": "partial",
+    "status": "complete",
     "sourceUrl": "./sources/exam-2025-complete.pdf",
     "answerSourceUrl": "./sources/answers-2025.pdf",
-    "questionCount": 19,
+    "questionCount": 35,
     "officialQuestionCount": 35,
     "sections": [
       {
@@ -4630,10 +4630,379 @@
             ],
             "correctOption": "B",
             "answer": "B. Nee, want deze werkuren tellen als verschoven uren."
+          },
+          {
+            "id": "2025-20",
+            "number": 20,
+            "question": "Marly moet na een volle werkdag tot 24.00 uur overwerken. Volgens het dienstrooster moet ze de volgende ochtend om 7.00 uur weer beginnen. Wat gebeurt er nu?",
+            "options": [
+              {
+                "label": "A",
+                "text": "Ze hoeft de dag na het overwerk niet te werken."
+              },
+              {
+                "label": "B",
+                "text": "Ze mag pas na 11 uren van rust weer gaan werken."
+              },
+              {
+                "label": "C",
+                "text": "Ze moet gewoon om 7.00 uur beginnen met werken."
+              }
+            ],
+            "correctOption": "B",
+            "answer": "B. Ze mag pas na 11 uren van rust weer gaan werken."
+          },
+          {
+            "id": "2025-21",
+            "number": 21,
+            "question": "Claire is 56 jaar en heeft een goede gezondheid. Ze wil liever niet overwerken. Wat kan haar werkgever doen?",
+            "options": [
+              {
+                "label": "A",
+                "text": "De werkgever kan Claire niet verplichten om over te werken."
+              },
+              {
+                "label": "B",
+                "text": "De werkgever kan Claire verplichten om 5 uur per vier weken over te werken."
+              },
+              {
+                "label": "C",
+                "text": "De werkgever kan Claire verplichten om 10 uur per vier weken over te werken."
+              },
+              {
+                "label": "D",
+                "text": "De werkgever kan Claire altijd verplichten om over te werken."
+              }
+            ],
+            "correctOption": "B",
+            "answer": "B. De werkgever kan Claire verplichten om 5 uur per vier weken over te werken."
+          },
+          {
+            "id": "2025-22",
+            "number": 22,
+            "question": "Pawel heeft 8 overuren gemaakt. Wat gebeurt er met die overuren?",
+            "options": [
+              {
+                "label": "A",
+                "text": "De overuren worden vergoed in geld."
+              },
+              {
+                "label": "B",
+                "text": "De overuren worden vergoed in vrije tijd."
+              },
+              {
+                "label": "C",
+                "text": "Hij mag zelf kiezen of de overuren worden vergoed in vrije tijd of in geld."
+              }
+            ],
+            "correctOption": "C",
+            "answer": "C. Hij mag zelf kiezen of de overuren worden vergoed in vrije tijd of in geld."
+          },
+          {
+            "id": "2025-23",
+            "number": 23,
+            "question": "Wat is het doel van deze tekst?",
+            "options": [
+              {
+                "label": "A",
+                "text": "de lezer overtuigen van het belang van overwerken"
+              },
+              {
+                "label": "B",
+                "text": "de lezer uitleggen wat de regels voor overwerk zijn"
+              },
+              {
+                "label": "C",
+                "text": "de lezer waarschuwen voor de risico?s van overwerken"
+              }
+            ],
+            "correctOption": "B",
+            "answer": "B. de lezer uitleggen wat de regels voor overwerk zijn"
+          }
+        ]
+      },
+      {
+        "id": "2025-s4",
+        "title": "De buurt-whatsapp",
+        "text": "Deze tekst komt van een nieuwssite en gaat over speciale WhatsApp-groepen voor buren. WhatsApp is een\napp waarmee veel mensen (in groepen of één-op-één) op hun telefoon berichten naar elkaar sturen.\nBEANTWOORD VRAAG 24 T/M 28\nDe buurt-whatsapp\nWhatsApp is één van de populairste diensten die mensen op hun telefoon gebruiken om berichten\nuit te wisselen met vrienden en familie. Steeds vaker wordt WhatsApp ook gebruikt door groepen\nmet een serieuzer doel. De buurt-whatsapp dient zo’n serieus doel.\nBuurt-whatsapp groeit snel in Nederland: er zijn inmiddels zo'n 7300 groepen. Deze speciale\nwhatsappgroepen zijn vaak bedoeld om verdachte situaties te melden aan buurtgenoten.\nMitra van de Kuilen is beheerder van een buurt-whatsapp in Middenbeemster.\nZo'n 70 van de 115 huishoudens in haar wijk zijn lid. \"Sommige buurtbewoners willen er niet in.\nSoms omdat ze ruzie hebben met hun buren of andere wijkbewoners en niet met hen in een groep\nwillen zitten. Anderen zijn sowieso meer op zichzelf.\"\nGevoel van veiligheid\nTea Rukavina nam tien jaar geleden het initiatief voor de buurt-whatsappgroepen. Aanleiding was\neen poging tot inbraak bij haar thuis. \"De politie kwam gelukkig snel. Die zijn natuurlijk een\nzoektocht gestart. Maar wat kon ik doen om de buurt snel te informeren over mogelijke gevaren?\nZo is de buurt-whatsapp begonnen.\"\nDe appgroep lijkt te voorzien in een behoefte. \"Het kan het gevoel van veiligheid stimuleren\", zegt\nHabib Wajid, onderzoeker en adviseur op het gebied van sociale media en maatschappelijke\nveiligheid. \"Maar er zijn ook allerlei groepen waarbij de appgroep het gevoel van onveiligheid juist\nvergroot.\"\nGevaren van de buurt-whatsapp\nWajid vertelt over situaties waarbij alle nieuwelingen in een dorp continu werden gevolgd via een\nbuurt-whatsapp. En eentje waarbij leden van de whatsappgroep massaal achter een\nvermoedelijke inbreker aangingen. \"Het is niet verantwoord als mensen zelf politie gaan spelen”,\nzegt Wajid.\nHet kan ook andere onrust veroorzaken. Bijvoorbeeld als een doodgewone glazenwasser wordt\naangezien voor een inbreker, en de hele buurt in rep en roer is. Of wanneer oplettende\nbuurtbewoners het geheime liefdesleven van een buurman onthullen, omdat ze zo vaak een\nvreemde auto voor zijn huis zien.\nDe zin en onzin van buurt-whatsapp\nEn dan zijn er nog de ruzies en irritaties die ontstaan omdat lang niet ieder lid zich aan de\nspelregels van de buurt-whatsapp houdt. “Dan doen ze bijvoorbeeld een oproep voor hun\nvermiste kat”, vertelt beheerder Van de Kuilen. “Ook verzoeken om de vuilniszakken buiten te\nzetten, worden niet altijd gewaardeerd. Een buurt-whatsapp is niet bedoeld voor oproepjes, dus af\nen toe grijp ik in. Dan speel ik even de politieagent\", zegt Van de Kuilen. \"Sommige mensen storen\nzich er niet aan, maar je ziet ook meteen dat mensen onmiddellijk de groep verlaten. Die hebben\ngeen zin in overbodige berichten.\"",
+        "pdfPageStart": 9,
+        "pdfPages": [
+          9
+        ],
+        "questions": [
+          {
+            "id": "2025-24",
+            "number": 24,
+            "question": "Wat is de bedoeling van buurt-whatsapp, volgens de tekst?",
+            "options": [
+              {
+                "label": "A",
+                "text": "dat buren elkaar kunnen helpen als er een ruzie is"
+              },
+              {
+                "label": "B",
+                "text": "dat buren elkaar leuke berichten kunnen sturen"
+              },
+              {
+                "label": "C",
+                "text": "dat buren elkaar waarschuwen als ze iets niet vertrouwen"
+              }
+            ],
+            "correctOption": "C",
+            "answer": "C. dat buren elkaar waarschuwen als ze iets niet vertrouwen"
+          },
+          {
+            "id": "2025-25",
+            "number": 25,
+            "question": "Tea Rukavina begon een buurt-whatsapp nadat er bij haar thuis bijna was ingebroken. Waarom deed ze dat?",
+            "options": [
+              {
+                "label": "A",
+                "text": "Ze wilde de buurt uitleggen wat de politie nu ging doen."
+              },
+              {
+                "label": "B",
+                "text": "Ze wilde de buurt vragen of zij iets bijzonders hadden gezien."
+              },
+              {
+                "label": "C",
+                "text": "Ze wilde de buurt waarschuwen voor inbrekers in de wijk."
+              }
+            ],
+            "correctOption": "C",
+            "answer": "C. Ze wilde de buurt waarschuwen voor inbrekers in de wijk."
+          },
+          {
+            "id": "2025-26",
+            "number": 26,
+            "question": "Soms gaan mensen uit een buurt-whatsappgroep zelf achter een vermoedelijke inbreker aan. Vindt Habib Wajid dat goed?",
+            "options": [
+              {
+                "label": "A",
+                "text": "Ja, want dat vergroot de veiligheid in de buurt."
+              },
+              {
+                "label": "B",
+                "text": "Nee, het is niet verstandig als mensen dit zelf doen."
+              },
+              {
+                "label": "C",
+                "text": "Alleen als ze zeker weten dat het inbrekers zijn."
+              }
+            ],
+            "correctOption": "B",
+            "answer": "B. Nee, het is niet verstandig als mensen dit zelf doen."
+          },
+          {
+            "id": "2025-27",
+            "number": 27,
+            "question": "Wanneer grijpt beheerder Mitra van de Kuilen in?",
+            "options": [
+              {
+                "label": "A",
+                "text": "als buren onverwacht de groep hebben verlaten"
+              },
+              {
+                "label": "B",
+                "text": "als buren overbodige berichten naar de groep sturen"
+              },
+              {
+                "label": "C",
+                "text": "als buren vervelend op een oproep van iemand reageren"
+              }
+            ],
+            "correctOption": "B",
+            "answer": "B. als buren overbodige berichten naar de groep sturen"
+          },
+          {
+            "id": "2025-28",
+            "number": 28,
+            "question": "Wat is het doel van deze tekst?",
+            "options": [
+              {
+                "label": "A",
+                "text": "de lezer adviseren om voorzichtig te zijn in een buurt-whatsapp"
+              },
+              {
+                "label": "B",
+                "text": "de lezer informeren over voor- en nadelen van een buurt-whatsapp"
+              },
+              {
+                "label": "C",
+                "text": "de lezer overhalen om een eigen buurt-whatsapp te starten"
+              }
+            ],
+            "correctOption": "B",
+            "answer": "B. de lezer informeren over voor- en nadelen van een buurt-whatsapp"
+          }
+        ]
+      },
+      {
+        "id": "2025-s5",
+        "title": "Algemene informatie Vision College",
+        "text": "Deze tekst komt van de website van het Vision College.\nLees eerst de vraag. Zoek het antwoord in de tekst.\nBEANTWOORD VRAAG 29 T/M 35\nAlgemene informatie Vision College\nAanwezigheid\nOnder Lestijden vind je de tijden waarbinnen de lessen bij het Vision College plaatsvinden.\nTussen de start van de eerste les op maandag en het eind van de laatste les op vrijdag moet\nje dus voor school beschikbaar zijn, behalve in de schoolvakanties.\nAan het begin van het schooljaar ontvangt elke student een belkaart. Wanneer je niet op\nschool of stage aanwezig kunt zijn, dien je dit voor 09.00 uur ’s ochtends te melden bij het\nOnderwijsservicebureau (OSB) van jouw sector (via het nummer dat op de belkaart staat) en\nindien van toepassing ook bij je stagebedrijf. De reden van je absentie wordt geregistreerd.\nAls je aanwezig moet zijn, maar wegblijft zonder geldige reden en/of zonder dit te melden,\nziet de school dit als ongeoorloofd verzuim. De school neemt dan direct contact met jou op.\nOm je aanwezigheid te melden, gebruik je de Visionpas. Je scant je pas bij de\ntoegangspoortjes bij de ingang. Hierdoor registreer je dat je in het gebouw aanwezig bent.\nBij aanvang van de les registreert de docent of je aanwezig bent. Je bent dan pas officieel\naanwezig bij de juiste onderwijsactiviteit.\nBereikbaarheid\nZorg ervoor dat de school altijd over een correct telefoonnummer en adres van jezelf en van\neen contactpersoon beschikt. In geval van nood kunnen we direct contact met jou en/of met\nje contactpersoon opnemen. Wijzigingen dien je schriftelijk door te geven aan de\nStudentenadministratie. Je kunt het wijzigingsformulier bij de Studentenadministratie ophalen\nen ingevuld weer afgeven. Het wijzigen van telefoonnummer of e-mailadres kan ook via\nSelfservice EduArte.\nGebruik ICE op je mobiele telefoon (ICE = in case of emergency) zodat, in geval van nood,\nhulpverleners contact op kunnen nemen met jouw contactpersonen.\nCalamiteit\nEen calamiteit is een situatie die gevaarlijk kan zijn, bijvoorbeeld een brand. Als er een\ncalamiteit is, word je gewaarschuwd door een alarmsignaal.\nHandel dan als volgt:\n▪ Ga zo snel mogelijk via de dichtstbijzijnde nooduitgang naar de verzamelplaats.\n▪ Gebruik geen lift.\n▪ Blijf op de verzamelplaats totdat je toestemming krijgt om weer naar binnen te gaan.\n▪ Volg de aanwijzingen van de bedrijfshulpverleners altijd op. Bedrijfshulpverleners zijn\nmedewerkers die je begeleiden bij een calamiteit. Je herkent ze aan een felgeel of\noranje hes met de letters BHV.\n\nZie je dat er ergens brand is of dat een andere gevaarlijke situatie zich voordoet en heb je\nnog geen alarmsignaal gehoord, waarschuw dan een conciërge of de receptie. In alle ruimtes\nhangt een kaart met ‘Richtlijnen bij Brand/Ongevallen’.\nBij de blusapparatuur in de gangen hangt een plattegrond met de ontruimingsroute bij\ncalamiteiten.\nIs de situatie naar jouw mening zó gevaarlijk dat er echt sprake is van een noodsituatie, dan\nkun je zelf het alarmsignaal starten. Daarvoor hangen in alle gebouwen melders (rode kastjes\nmet een knop). Of je belt toestel 100 (via een vaste telefoon) of 8888 (via je mobiele\ntelefoon).\nCursusgeld\nJe moet wettelijk cursusgeld betalen als je een BBL-opleiding volgt en op 1 augustus 18 jaar\nof ouder bent. Je moet ook wettelijk cursusgeld betalen als je een deeltijd-vavo-opleiding\nvolgt (voor vavo is geen leeftijdsbepaling van toepassing).\nDe overheid stelt de hoogte van het cursusgeld jaarlijks opnieuw vast. Voor komend\nschooljaar is dit:\n▪ € 236,00 voor niveau 1 of 2\n▪ € 573,00 voor niveau 3 of 4\nOok vavo-studenten die een opleiding volgen van minder dan 29 lesuren en via de\nrijksoverheid bekostigd worden, moeten wettelijk cursusgeld betalen: € 30,- per lesuur.\nOver de betaling ontvang je een AcceptEmail van het Vision College. Op onze website en op\nde ELO staat het financieel reglement. Lees dit zorgvuldig door!\nDe factuur klopt niet\nAls je vindt dat de factuur niet klopt, kun je binnen 14 dagen na de factuurdatum een brief\nsturen naar de Financiële administratie:\nVision College\nFinanciële administratie\nTeam debiteuren\nPostbus 30\n1800 AA Alkmaar\ndebiteuren@visioncollege.nl\nVermeld altijd je naam, geboortedatum, studentennummer en het factuurnummer.\nBetalen moet!\nJe bent zelf verantwoordelijk voor de betaling. Als je niet betaalt, kan de school een\nincassobureau inschakelen.\nDerdenmachtiging\nBij BBL wordt het cursusgeld door sommige werkgevers vergoed. Als je werkgever je\ncursusgeld wil betalen, moet er per schooljaar een derdenmachtiging ingevuld worden. Deze\nmoet zowel door de werkgever als door jezelf getekend worden. Na ontvangst van de\nderdenmachtiging wordt de factuur op naam van de werkgever gezet.\nEen derdenmachtiging kun je aanvragen bij Team debiteuren. Als de derdenmachtiging niet\nondertekend door de school wordt ontvangen, blijf je zelf verantwoordelijk voor de betaling.\n\nCursusgeld terugkrijgen\nAls je tussentijds met de opleiding stopt, kun je het cursusgeld geheel of gedeeltelijk alleen\nterugkrijgen als jij:\n▪ je uitschrijft vóór je eerste lesdag (geheel);\n▪ je vóór 1 oktober van dit jaar laat uitschrijven;\n▪ vóór 1 mei van het komende jaar je diploma haalt en de school verlaat (niet van\ntoepassing bij vavo);\n▪ van een BBL-opleiding overstapt naar een BOL-opleiding (je gaat dan wel lesgeld\nbetalen);\n▪ van een deeltijd-vavo-opleiding overstapt naar een voltijd-vavo-opleiding (je gaat dan\nwel lesgeld betalen);\n▪ in geval van bijzondere familieomstandigheden, zoals ernstige ziekte of overlijden,\ntussentijds met de opleiding moet stoppen.\nLees de voorwaarden in het financieel reglement.\nAls je overstapt naar een opleiding met een ander cursusgeldtarief, dan kan het verschil\nworden verrekend.\nTeruggave gaat niet automatisch. Je moet het altijd zelf aanvragen bij Team debiteuren via\nhet formulier \"aanvraag terugbetaling cursusgeld\". Vragen? Ga naar Team debiteuren (in\nAlkmaar).\nDecaan\nDe sectoren Economie, Gezondheidszorg, Welzijn & Entree en Handel & Dienstverlening\nhebben een of meer decanen of voorlichters. Bij een decaan of voorlichter kun je terecht als\nje:\n▪ meer wilt weten over de opleidingen binnen je sector en je kansen op werk erna;\n▪ meer wilt weten over vervolgopleidingen, de kosten ervan en de mogelijkheden erna;\n▪ je wilt laten uitschrijven;\n▪ je wilt laten overschrijven naar een andere opleiding;\n▪ doorverwezen wilt worden naar het Studie Informatie Punt (STIP).\nBij de sector Techniek ga je hiervoor naar je mentor.\nEHBO\nElke locatie van het Vision College heeft EHBO-hulpmiddelen. Een pleister nodig of andere\nE(erste) H(ulp) B(ij) O(ngelukken)? Ga of bel naar de receptie of een conciërge! Als\nspoedeisende hulp nodig is, bel je toestel 100 (via een vaste telefoon).\nBij een ongeval help je de gewonde persoon naar de receptie. Als je de gewonde persoon niet\nkunt of durft te verplaatsen, blijf je altijd bij hem of haar en laat je iemand anders de receptie\nof conciërge waarschuwen. Vraag of diegene wel daarna terugkomt om te vertellen wat er\nmoet gebeuren.\nVolg altijd de instructies op van de EHBO’er of de bedrijfshulpverlener.\n\nUitjes\nBij een aantal opleidingen worden uitjes georganiseerd. Als deze deel uitmaken van het\nlesprogramma is deelname verplicht en zijn er geen kosten aan verbonden. Daarnaast\nkunnen er ook uitjes worden georganiseerd die niet tot het lesprogramma behoren. Voor deze\nuitjes betaal je apart via de webshop van het Vision College. De kosten worden in dit geval\nniet uit het lesgeld of het cursusgeld betaald.\nVisionpas\nJe hebt een Visionpas nodig als je een opleiding volgt.\nMet de Visionpas:\n▪ krijg je toegang tot de gebouwen van het Vision College (je houdt hem vlak bij de\nlezer in de toegangspoortjes);\n▪ kun je binnen de gebouwen laten zien wie je bent als hier door een docent, conciërge\nof (beveiligings)medewerker naar gevraagd wordt;\n▪ kun je je legitimeren bij examens;\n▪ registreer je je bij het OLC;\n▪ kun je jouw kluisje openen (in Purmerend met een sleutel);\n▪ kun je prints en kopieën maken met een print-/kopieer-/scanapparaat;\n▪ kunnen wij registreren of je in een onderwijsruimte aanwezig bent.\nHoe krijg je een Visionpas?\nJe kunt de pas krijgen bij het Passenbureau (in Alkmaar en Heerhugowaard naast de receptie\nen in Hoorn tegenover de receptie).\nNieuwe studenten: de pas wordt gemaakt nadat je bent ingeschreven. Het kan enkele dagen\nduren voordat je de pas kunt ophalen. Hier krijg je bericht van. Intussen kun je een tijdelijke\npas aanvragen.\nAls je al bij het Vision College ingeschreven staat: meestal kun je de pas al ophalen op\ndezelfde dag dat je hem aanvraagt.\nDe pas blijft eigendom van het Vision College.\nHoe krijg je een tijdelijke Visionpas?\nAls je nog op je Visionpas wacht, maar wel het gebouw in moet kunnen, kun je een tijdelijke\npas ophalen bij het Passenbureau. Het Onderwijsservicebureau van jouw sector heeft aan het\nPassenbureau een lijst aangeleverd van studenten die tijdelijk doorgelaten mogen worden en\ntot welke datum. Het Passenbureau zorgt ervoor dat deze pas voor je klaar ligt.\nJe Visionpas doet het niet\nHet kan zijn dat het toegangspoortje een enkele keer niet op je pas reageert. Meld je dan bij\nhet Passenbureau of ga naar een beveiligingsmedewerker of conciërge, deze zijn altijd in de\nbuurt en kunnen je helpen.\nHet kan ook zijn dat je pas zelf defect is. Dan kun je hem bij het Passenbureau ruilen voor\neen nieuwe. Als de pas door je eigen schuld defect is, moet je de kosten van de nieuwe pas\nzelf betalen: € 5,- administratiekosten en € 5,- voor het pasje.\n\nJe bent je Visionpas vergeten\nJe kunt een tijdelijke pas krijgen voor een dag. Aan het einde van de dag zijn je Visionpas en\nde tijdelijke pas geblokkeerd. Je betaalt daarvoor € 5,-administratiekosten. Als je de tijdelijke\npas weer terugbrengt, wordt je Visionpas weer gedeblokkeerd.\nJe bent je Visionpas kwijt\nJe kunt bij het Passenbureau een nieuwe pas aanvragen. Hiervoor betaal je € 5,-\nadministratiekosten en € 5,- voor het pasje. Als je eenmaal een vervangend pasje hebt\naangevraagd, kan het oude pasje niet meer worden gebruikt.\nJe Visionpas wordt misbruikt\nBij misbruik van de Visionpas wordt deze ingenomen en/of ongeldig gemaakt. Degene op\nwiens naam de pas stond kan een vervangende pas aanvragen. Dit is ter beoordeling van de\nlocatiemanager.\nJe hebt je Visionpas niet meer nodig\nLever de pas in bij het Passenbureau. De pas wordt overigens automatisch ongeldig als je bij\nhet Vision College wordt uitgeschreven.\nVragen\nMet (andere) vragen over de Visionpas kun je terecht bij het Passenbureau (naast/tegenover\nde receptie).\nJe foto\nOp de Visionpas staat je foto. Deze foto wordt gemaakt door het Passenbureau. Vanwege\nidentificatie, onder andere tijdens examens, mag de foto niet beschadigd zijn!",
+        "pdfPageStart": 10,
+        "pdfPages": [
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "questions": [
+          {
+            "id": "2025-29",
+            "number": 29,
+            "question": "Marisa volgt een opleiding aan het Vision College. Ze heeft een uitje met haar klas. Wordt dit uitje betaald door het Vision College?",
+            "options": [
+              {
+                "label": "A",
+                "text": "Ja, want de kosten voor uitjes vallen onder het lesgeld."
+              },
+              {
+                "label": "B",
+                "text": "Nee, want studenten moeten zelf voor uitjes betalen."
+              },
+              {
+                "label": "C",
+                "text": "Alleen als het uitje onderdeel is van het lesprogramma."
+              }
+            ],
+            "correctOption": "C",
+            "answer": "C. Alleen als het uitje onderdeel is van het lesprogramma."
+          },
+          {
+            "id": "2025-30",
+            "number": 30,
+            "question": "Reza volgt een BBL-opleiding. Hij wil een derdenmachtiging laten invullen voor zijn cursusgeld. Wie moet deze derdenmachtiging ondertekenen voordat Reza hem inlevert?",
+            "options": [
+              {
+                "label": "A",
+                "text": "de werkgever en Reza zelf"
+              },
+              {
+                "label": "B",
+                "text": "de werkgever en Team debiteuren"
+              },
+              {
+                "label": "C",
+                "text": "Team debiteuren en Reza zelf"
+              }
+            ],
+            "correctOption": "A",
+            "answer": "A. de werkgever en Reza zelf"
+          },
+          {
+            "id": "2025-31",
+            "number": 31,
+            "question": "Stef is zijn Visionpas verloren. Hij vraagt een nieuwe pas aan. Wat moet Stef in totaal betalen?",
+            "options": [
+              {
+                "label": "A",
+                "text": "Hij hoeft niets te betalen."
+              },
+              {
+                "label": "B",
+                "text": "Hij moet ? 5,- voor de nieuwe pas betalen."
+              },
+              {
+                "label": "C",
+                "text": "Hij moet ? 5,- voor de nieuwe pas en ? 5,- administratiekosten betalen."
+              }
+            ],
+            "correctOption": "C",
+            "answer": "C. Hij moet ? 5,- voor de nieuwe pas en ? 5,- administratiekosten betalen."
+          },
+          {
+            "id": "2025-32",
+            "number": 32,
+            "question": "William gaat een vavo-opleiding van minder dan 29 lesuren volgen aan het Vision College. Waar hangt de hoogte van Williams cursusgeld van af?",
+            "options": [
+              {
+                "label": "A",
+                "text": "van het niveau van de opleiding die William gaat volgen"
+              },
+              {
+                "label": "B",
+                "text": "van het totale aantal lesuren van Williams opleiding"
+              },
+              {
+                "label": "C",
+                "text": "van Williams leeftijd bij de start van de opleiding"
+              }
+            ],
+            "correctOption": "B",
+            "answer": "B. van het totale aantal lesuren van Williams opleiding"
+          },
+          {
+            "id": "2025-33",
+            "number": 33,
+            "question": "Stacy hoort dat het alarmsignaal afgaat. Wat kan ze het beste doen?",
+            "options": [
+              {
+                "label": "A",
+                "text": "bellen naar toestel 100 of naar 8888"
+              },
+              {
+                "label": "B",
+                "text": "een conci?rge of de receptie waarschuwen"
+              },
+              {
+                "label": "C",
+                "text": "meteen naar de verzamelplaats buiten gaan"
+              },
+              {
+                "label": "D",
+                "text": "zich melden bij een bedrijfshulpverlener"
+              }
+            ],
+            "correctOption": "C",
+            "answer": "C. meteen naar de verzamelplaats buiten gaan"
+          },
+          {
+            "id": "2025-34",
+            "number": 34,
+            "question": "Dounia gaat stoppen met haar opleiding in de sector Gezondheidszorg. Ze wil zich laten uitschrijven. Kan ze hiervoor bij de decaan terecht?",
+            "options": [
+              {
+                "label": "A",
+                "text": "Ja, de decaan kan haar uitschrijven."
+              },
+              {
+                "label": "B",
+                "text": "Nee, ze moet daarvoor naar haar mentor."
+              },
+              {
+                "label": "C",
+                "text": "Dat kan, maar het mag ook bij het Studie Informatie Punt (STIP)."
+              }
+            ],
+            "correctOption": "A",
+            "answer": "A. Ja, de decaan kan haar uitschrijven."
+          },
+          {
+            "id": "2025-35",
+            "number": 35,
+            "question": "Wat meld je door middel van het scannen van je Visionpas?",
+            "options": [
+              {
+                "label": "A",
+                "text": "Alleen dat je in het gebouw aanwezig bent."
+              },
+              {
+                "label": "B",
+                "text": "Alleen dat je in het gebouw aanwezig bent en in welke onderwijsruimte je bent."
+              },
+              {
+                "label": "C",
+                "text": "Dat je in het gebouw aanwezig bent, in welke onderwijsruimte je bent en dat je een bepaalde les hebt gevolgd."
+              }
+            ],
+            "correctOption": "B",
+            "answer": "B. Alleen dat je in het gebouw aanwezig bent en in welke onderwijsruimte je bent."
           }
         ]
       }
-    ],
-    "statusNote": "نموذج 2025 جزئي تفاعليًا: 19 سؤالًا من أصل 35. لا تُضاف أسئلة أو اختيارات أو أدلة غير موثقة داخل قاعدة البيانات."
+    ]
   }
 ]

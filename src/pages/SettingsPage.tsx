@@ -1,9 +1,11 @@
 import { Database, Download, HardDrive, ShieldCheck, Trash2, Upload } from 'lucide-react';
 import { useRef } from 'react';
 import { useProgress } from '../lib/ProgressContext';
+import { usePageMeta } from '../lib/pageMeta';
 import { useToast } from '../lib/ToastContext';
 
 export function SettingsPage() {
+  usePageMeta('الإعدادات');
   const fileRef = useRef<HTMLInputElement>(null);
   const { downloadBackup, previewBackup, restoreBackup, clearAll } = useProgress();
   const { showToast } = useToast();

@@ -14,6 +14,7 @@ import { SourceLink } from '../components/SourceLink';
 import { SourceReader } from '../components/SourceReader';
 import { examples, levelLabels, skillLabels, years } from '../lib/data';
 import { useProgress } from '../lib/ProgressContext';
+import { usePageMeta } from '../lib/pageMeta';
 import type { Example } from '../lib/schema';
 import { createSessionQueue } from '../lib/search';
 import { useToast } from '../lib/ToastContext';
@@ -52,6 +53,7 @@ const defaultSetup: Setup = {
 };
 
 export function TrainingPage() {
+  usePageMeta('جلسة التدريب');
   const [setup, setSetup] = useState<Setup>(defaultSetup);
   const [queue, setQueue] = useState<Example[]>([]);
   const [index, setIndex] = useState(0);

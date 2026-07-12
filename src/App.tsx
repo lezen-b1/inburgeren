@@ -11,7 +11,8 @@ const TrainingPage = lazy(() => import('./pages/TrainingPage').then((module) => 
 const ProgressPage = lazy(() => import('./pages/ProgressPage').then((module) => ({ default: module.ProgressPage })));
 const SettingsPage = lazy(() => import('./pages/SettingsPage').then((module) => ({ default: module.SettingsPage })));
 const SourcesPage = lazy(() => import('./pages/SourcesPage').then((module) => ({ default: module.SourcesPage })));
-const PdfReaderPage = lazy(() => import('./pages/PdfReaderPage').then((module) => ({ default: module.PdfReaderPage })));
+const PdfViewerPage = lazy(() => import('./pages/PdfViewerPage').then((module) => ({ default: module.PdfViewerPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
 
 function RouteLoading() {
   return <section className="section shell"><div className="loading-card">جارٍ تحميل الصفحة…</div></section>;
@@ -44,8 +45,9 @@ export function App() {
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/sources" element={<SourcesPage />} />
-          <Route path="/pdf" element={<PdfReaderPage />} />
-          <Route path="*" element={<Navigate to="/home" replace />} />
+          <Route path="/techniques" element={<Navigate to="/pdf-viewer?document=reading-techniques&page=1" replace />} />
+          <Route path="/pdf-viewer" element={<PdfViewerPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
     </Layout>

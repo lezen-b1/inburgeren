@@ -7,9 +7,9 @@ describe('exam model data', () => {
     expect(examModels.map((model) => model.year)).toEqual([2020, 2021, 2022, 2023, 2024, 2025]);
   });
 
-  it('contains every official question for 2020 through 2024', () => {
-    const complete = examModels.filter((model) => model.status === 'complete' && model.year <= 2024);
-    expect(complete.reduce((sum, model) => sum + model.questionCount, 0)).toBe(178);
+  it('contains every official question for 2020 through 2025', () => {
+    const complete = examModels.filter((model) => model.status === 'complete');
+    expect(complete.reduce((sum, model) => sum + model.questionCount, 0)).toBe(213);
   });
 
   it('keeps every complete-model answer inside its displayed options', () => {
@@ -52,12 +52,20 @@ describe('exam model data', () => {
     }
   });
 
-  it('marks 2025 as partial with 19 structured questions out of 35 official questions', () => {
+  it('marks 2025 as complete with 35 structured official questions', () => {
     const model2025 = examModels.find((model) => model.year === 2025);
-    expect(model2025?.status).toBe('partial');
-    expect(model2025?.questionCount).toBe(19);
+    expect(model2025?.status).toBe('complete');
+    expect(model2025?.sections).toHaveLength(6);
+    expect(model2025?.questionCount).toBe(35);
     expect(model2025?.officialQuestionCount).toBe(35);
-    expect(model2025?.sections.flatMap((section) => section.questions)).toHaveLength(19);
+    expect(model2025?.sections.flatMap((section) => section.questions)).toHaveLength(35);
+  });
+
+  it('matches the complete official 2025 answer key', () => {
+    const model2025 = examModels.find((model) => model.year === 2025);
+    const expected = ['C', 'A', 'C', 'A', 'C', 'A', 'C', 'A', 'C', 'C', 'A', 'A', 'A', 'C', 'A', 'C', 'A', 'B', 'B', 'B', 'B', 'C', 'B', 'C', 'C', 'B', 'B', 'B', 'C', 'A', 'C', 'B', 'C', 'A', 'B'];
+    const actual = model2025?.sections.flatMap((section) => section.questions).sort((a, b) => a.number - b.number).map((question) => question.correctOption);
+    expect(actual).toEqual(expected);
   });
 
   it('never exposes an empty evidence box state', () => {

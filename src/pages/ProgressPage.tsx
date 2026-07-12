@@ -6,11 +6,15 @@ import { deleteExamSession, getExamSessions, type ExamSessionRecord } from '../l
 import { calculateExamSummary } from '../lib/examScoring';
 import { examModels } from '../lib/exams';
 import { useProgress } from '../lib/ProgressContext';
+import { usePageMeta } from '../lib/pageMeta';
 
 export function ProgressPage() {
+  usePageMeta('التقدم');
   const { progress, sessions, ready, deleteTrainingResult } = useProgress();
   const [examSessions, setExamSessions] = useState<ExamSessionRecord[]>([]);
   const [expandedExamId, setExpandedExamId] = useState('');
+  const [showAllTrainingSessions, setShowAllTrainingSessions] = useState(false);
+  const [sessionSort, setSessionSort] = useState<'newest' | 'oldest'>('newest');
 
   useEffect(() => {
     getExamSessions().then(setExamSessions).catch(() => setExamSessions([]));
@@ -62,6 +66,8 @@ export function ProgressPage() {
     if (!window.confirm('هل تريد حذف هذه الجلسة من السجل؟')) return;
     await deleteTrainingResult(id);
   };
+  const sortedSessions = [...sessions].sort((a, b) => sessionSort === 'newest' ? b.completedAt - a.completedAt : a.completedAt - b.completedAt);
+  const visibleSessions = showAllTrainingSessions ? sortedSessions : sortedSessions.slice(0, 8);
 
   if (!ready) return <section className="section shell"><div className="loading-card">جارٍ تحميل التقدم…</div></section>;
 
@@ -148,8 +154,17 @@ export function ProgressPage() {
         </section>
 
         <section className="panel-card">
-          <div className="panel-card__head"><div><span className="section-kicker">السجل</span><h2>الجلسات الأخيرة</h2></div></div>
-          {sessions.length ? <div className="session-list">{sessions.slice(0, 8).map((session) => <article key={session.id}><div><strong>{new Date(session.completedAt).toLocaleDateString('ar')}</strong><span>{session.total} أسئلة</span></div><p>{session.correctFirstTry} من أول مرة</p><small>{session.wrongAttempts} محاولات خاطئة</small><button className="text-link" type="button" onClick={() => void removeTrainingSession(session.id)}>حذف</button></article>)}</div> : <div className="panel-empty">لا توجد جلسات محفوظة بعد.</div>}
+          <div className="panel-card__head">
+            <div><span className="section-kicker">السجل</span><h2>الجلسات الأخيرة</h2></div>
+            <label className="compact-select"><span>الترتيب</span><select value={sessionSort} onChange={(event) => setSessionSort(event.target.value as 'newest' | 'oldest')}><option value="newest">الأحدث</option><option value="oldest">الأقدم</option></select></label>
+          </div>
+          {sessions.length ? (
+            <>
+              <p className="list-count">عرض {visibleSessions.length} من {sessions.length}</p>
+              <div className="session-list">{visibleSessions.map((session) => <article key={session.id}><div><strong>{new Date(session.completedAt).toLocaleDateString('ar')}</strong><span>{session.total} أسئلة</span></div><p>{session.correctFirstTry} من أول مرة</p><small>{session.wrongAttempts} محاولات خاطئة</small><button className="text-link" type="button" onClick={() => void removeTrainingSession(session.id)}>حذف</button></article>)}</div>
+              {sessions.length > 8 && <button className="button button--secondary" type="button" onClick={() => setShowAllTrainingSessions((value) => !value)}>{showAllTrainingSessions ? 'عرض أقل' : 'عرض الكل'}</button>}
+            </>
+          ) : <div className="panel-empty">لا توجد جلسات محفوظة بعد.</div>}
         </section>
       </div>
     </section>

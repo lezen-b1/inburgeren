@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { StudyCard } from '../components/StudyCard';
 import { examples, levelLabels, skillLabels, transformationTypes, years } from '../lib/data';
 import { useProgress } from '../lib/ProgressContext';
+import { usePageMeta } from '../lib/pageMeta';
 import { filterExamples, type ExampleFilters } from '../lib/search';
 import { useToast } from '../lib/ToastContext';
 
@@ -21,6 +22,7 @@ const defaultFilters: ExampleFilters = {
 };
 
 export function LibraryPage() {
+  usePageMeta('المكتبة');
   const [searchParams, setSearchParams] = useSearchParams();
   const { progress } = useProgress();
   const { showToast } = useToast();

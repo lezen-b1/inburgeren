@@ -1,8 +1,10 @@
 import { ExternalLink, ShieldCheck } from 'lucide-react';
-import { pdfReaderHref } from '../lib/assetUrl';
+import { publicAssetUrl } from '../lib/assetUrl';
 import { sourceDocuments } from '../lib/exams';
+import { usePageMeta } from '../lib/pageMeta';
 
 export function SourcesPage() {
+  usePageMeta('المصادر وحقوق الاستخدام');
   return (
     <section className="section shell sources-page">
       <div className="page-heading">
@@ -22,7 +24,7 @@ export function SourcesPage() {
       </section>
 
       <div className="source-rights-list">
-        {sourceDocuments.map((doc) => (
+        {sourceDocuments.filter((doc) => doc.category !== 'practice').map((doc) => (
           <article className="source-rights-card" key={doc.id}>
             <div>
               <span className="chip">{doc.year ?? 'عام'}</span>
@@ -30,7 +32,7 @@ export function SourcesPage() {
             </div>
             <h2>{doc.title}</h2>
             <p>{doc.description}</p>
-            <a className="text-link" href={pdfReaderHref(doc.sourceUrl, { title: doc.title })} target="_blank" rel="noreferrer"><ExternalLink size={16} /> فتح المصدر المرفق</a>
+            <a className="text-link" href={publicAssetUrl(doc.sourceUrl)} target="_blank" rel="noreferrer"><ExternalLink size={16} /> فتح المصدر المرفق</a>
           </article>
         ))}
       </div>
