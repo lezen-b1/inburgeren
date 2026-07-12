@@ -43,7 +43,8 @@ export default defineConfig({
             options: {
               cacheName: 'nt2-source-pdfs',
               expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 30 },
-              cacheableResponse: { statuses: [0, 200] }
+              cacheableResponse: { statuses: [0, 200] },
+              rangeRequests: true
             }
           }
         ]
