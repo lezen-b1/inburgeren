@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 declare const process: { env: Record<string, string | undefined> };
 
 export default defineConfig({
-  base: './',
+  base: '/inburgeren/',
   plugins: [
     react(),
     VitePWA({

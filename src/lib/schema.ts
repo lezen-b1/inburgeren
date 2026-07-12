@@ -48,8 +48,12 @@ export const ExamQuestionSchema = z.object({
   explanation: z.string().min(1).optional(),
   evidence: z.string().min(1).optional(),
   evidenceStatus: EvidenceStatusSchema.optional(),
+  evidenceText: z.string().min(1).optional(),
   evidencePage: z.number().int().positive().optional(),
   evidenceSource: z.string().min(1).optional(),
+  sourceDocumentId: z.string().min(1).optional(),
+  explanationAr: z.string().min(1).optional(),
+  wrongOptionExplanations: z.record(z.enum(['A', 'B', 'C', 'D']), z.string().min(1)).optional(),
 });
 
 export const ExamSectionSchema = z.object({

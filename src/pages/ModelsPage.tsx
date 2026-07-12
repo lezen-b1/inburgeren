@@ -30,15 +30,15 @@ export function ModelsPage() {
           <span className="section-kicker">كل المواد في مكان واحد</span>
           <h1>النماذج وملفات القراءة</h1>
           <p>
-            النماذج الرسمية 2020–2025 متاحة كتدريب تفاعلي موثق مع النص والأسئلة والاختيارات الرسمية.
-            تم دمج ملف أسئلة 2025 الكامل ومفتاح الإجابة الرسمي دون اختراع أي اختيار.
+            النماذج الرسمية 2020–2024 متاحة كتدريب تفاعلي كامل، ونموذج 2025 متاح جزئيًا وفق البيانات الموثقة داخل قاعدة المشروع.
+            لا تُضاف أسئلة أو اختيارات أو أدلة غير موجودة في ملفات المصدر.
           </p>
         </div>
       </div>
 
       <div className="coverage-banner">
         <div><strong>178</strong><span>سؤالًا رسميًا موثقًا 2020–2024</span></div>
-        <div><strong>35</strong><span>سؤالًا رسميًا من 2025</span></div>
+        <div><strong>19/35</strong><span>تغطية 2025 التفاعلية</span></div>
         <div><strong>3</strong><span>مجموعات تدريب حديثة 2025</span></div>
         <div><strong>النص ظاهر</strong><span>قبل الاختيار، وليس بعده</span></div>
       </div>
@@ -75,7 +75,7 @@ export function ModelsPage() {
                         <span>{Math.max(0, (interactive.officialQuestionCount ?? interactive.questionCount) - interactive.questionCount)} ناقص</span>
                         <span>{interactive.sourceUrl ? 'ملف النص موجود' : 'ملف النص غير موجود'}</span>
                         <span>{interactive.answerSourceUrl ? 'مفتاح الإجابة موجود' : 'مفتاح الإجابة غير موجود'}</span>
-                        <span>{interactive.status === 'partial' ? 'ملف الأسئلة الكامل غير موجود' : 'ملف الأسئلة مهيكل'}</span>
+                        <span>{interactive.status === 'partial' ? `${interactive.questionCount} من ${interactive.officialQuestionCount ?? interactive.questionCount} سؤالًا مهيكلًا` : 'ملف الأسئلة مهيكل'}</span>
                       </div>
                     )}
                     <div className="model-card__actions">

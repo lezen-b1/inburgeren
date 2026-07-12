@@ -593,6 +593,28 @@
   .pdf-fallback { position: absolute; inset-inline: .6rem; inset-block-end: .6rem; margin: 0; border-radius: 10px; background: rgba(46, 16, 101, .92); color: white; padding: .55rem .75rem; font-size: .78rem; text-align: center; box-shadow: var(--shadow-2); }
   .reader-fallback { display: grid; place-items: center; min-height: 280px; text-align: center; color: var(--muted); }
   .reader-fallback p { direction: rtl; text-align: center; }
+  .resume-session-card { border: 1px solid var(--line); border-radius: 8px; padding: 1rem; display: grid; gap: .65rem; background: var(--surface-2); margin-block: 1rem; }
+  .resume-session-card > span { color: var(--muted); font-size: .9rem; }
+  .resume-session-card > div { display: flex; gap: .6rem; flex-wrap: wrap; }
+  .metric-grid--compact { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-block: 1rem; }
+  .exam-result-list { display: grid; gap: .85rem; }
+  .exam-result-card { border: 1px solid var(--line); border-radius: 8px; padding: 1rem; background: var(--surface); display: grid; gap: .85rem; }
+  .exam-result-card > div:first-child { display: grid; gap: .2rem; }
+  .exam-result-card > div:first-child span { color: var(--muted); }
+  .exam-result-card dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: .65rem; margin: 0; }
+  .exam-result-card dt { color: var(--muted); font-size: .78rem; }
+  .exam-result-card dd { margin: .15rem 0 0; font-weight: 800; }
+  .exam-result-details { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .exam-result-details span { border: 1px solid var(--line); border-radius: 999px; padding: .35rem .55rem; color: var(--muted); font-size: .78rem; }
+  .wrong-options-panel { border: 1px solid var(--line); border-radius: 8px; padding: .9rem; display: grid; gap: .45rem; background: var(--surface-2); }
+  .wrong-options-panel p { margin: 0; display: flex; gap: .5rem; align-items: flex-start; }
+  .wrong-options-panel span { min-width: 1.7rem; font-weight: 900; color: var(--purple-700); }
+  .evidence-box--muted { background: var(--surface-2); }
+  .source-rights-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+  .source-rights-card { border: 1px solid var(--line); border-radius: 8px; padding: 1rem; background: var(--surface); display: grid; gap: .75rem; }
+  .source-rights-card > div { display: flex; gap: .45rem; flex-wrap: wrap; }
+  .source-rights-card h2 { margin: 0; font-size: 1.05rem; }
+  .source-rights-card p { margin: 0; color: var(--muted); line-height: 1.75; }
 
   .exam-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; }
   .exam-heading h1 { margin-top: .25rem; }

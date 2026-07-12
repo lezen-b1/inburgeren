@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -17,7 +17,13 @@ import { useProgress } from '../lib/ProgressContext';
 import type { Example } from '../lib/schema';
 import { createSessionQueue } from '../lib/search';
 import { useToast } from '../lib/ToastContext';
-import type { SessionRecord } from '../lib/db';
+import {
+  abandonTrainingSession,
+  getActiveTrainingSession,
+  putTrainingSession,
+  type SessionRecord,
+  type TrainingSessionRecord,
+} from '../lib/db';
 import { examModels, findSectionForExample } from '../lib/exams';
 
 interface Setup {
@@ -53,6 +59,8 @@ export function TrainingPage() {
   const [results, setResults] = useState<Result[]>([]);
   const [checkpoint, setCheckpoint] = useState<number | null>(null);
   const [finished, setFinished] = useState(false);
+  const [trainingSession, setTrainingSession] = useState<TrainingSessionRecord | null>(null);
+  const [pendingTrainingSession, setPendingTrainingSession] = useState<TrainingSessionRecord | null>(null);
   const { progress, saveSession } = useProgress();
   const { showToast } = useToast();
 
@@ -64,10 +72,28 @@ export function TrainingPage() {
     return true;
   }), [setup]);
 
-  const start = () => {
+  useEffect(() => {
+    getActiveTrainingSession()
+      .then((saved) => setPendingTrainingSession(saved ?? null))
+      .catch(() => showToast('تعذر قراءة جلسة التدريب المحفوظة من IndexedDB.', 'warning'));
+  }, [showToast]);
+
+  const persistTrainingSession = async (patch: Partial<TrainingSessionRecord>) => {
+    if (!trainingSession) return;
+    const next = { ...trainingSession, ...patch, updatedAt: Date.now() };
+    setTrainingSession(next);
+    await putTrainingSession(next);
+  };
+
+  const start = async () => {
     if (!pool.length) {
       showToast('لا توجد أسئلة بهذه الفلاتر.', 'warning');
       return;
+    }
+    if (pendingTrainingSession) {
+      if (!window.confirm('توجد جلسة تدريب غير مكتملة. هل تريد أرشفتها وبدء جلسة جديدة؟')) return;
+      await abandonTrainingSession(pendingTrainingSession);
+      setPendingTrainingSession(null);
     }
     const reviewItems = pool.filter((example) => progress[example.id]?.review);
     const regularItems = pool.filter((example) => !progress[example.id]?.review);
@@ -79,16 +105,66 @@ export function TrainingPage() {
       const remaining = createSessionQueue(pool.filter((item) => !unique.some((chosenItem) => chosenItem.id === item.id)), setup.count - unique.length);
       unique.push(...remaining);
     }
+    const now = Date.now();
+    const record: TrainingSessionRecord = {
+      id: crypto.randomUUID(),
+      sessionId: crypto.randomUUID(),
+      questionIds: unique.map((item) => item.id),
+      currentIndex: 0,
+      answers: [],
+      wrongAttempts: {},
+      startedAt: now,
+      updatedAt: now,
+      completed: false,
+      reviewShown: false,
+    };
+    await putTrainingSession(record);
+    setTrainingSession(record);
     setQueue(unique);
     setIndex(0);
     setResults([]);
-    setStartedAt(Date.now());
+    setStartedAt(now);
     setCheckpoint(null);
     setFinished(false);
   };
 
+  const resumePending = () => {
+    if (!pendingTrainingSession) return;
+    const byId = new Map(examples.map((example) => [example.id, example]));
+    const restoredQueue = pendingTrainingSession.questionIds.map((id) => byId.get(id)).filter((item): item is Example => Boolean(item));
+    setTrainingSession(pendingTrainingSession);
+    setQueue(restoredQueue);
+    setIndex(Math.min(pendingTrainingSession.currentIndex, Math.max(restoredQueue.length - 1, 0)));
+    setStartedAt(pendingTrainingSession.startedAt);
+    setResults(pendingTrainingSession.answers.map((answer) => ({
+      exampleId: answer.exampleId,
+      wrongAttempts: answer.wrongAttempts,
+      firstTry: answer.firstTry,
+      type: byId.get(answer.exampleId)?.transformationType ?? 'غير مصنف',
+    })));
+    setPendingTrainingSession(null);
+    setFinished(false);
+    setCheckpoint(null);
+  };
+
   const registerResult = (result: Result) => {
     setResults((current) => [...current.filter((item) => item.exampleId !== result.exampleId), result]);
+    void persistTrainingSession({
+      answers: [
+        ...(trainingSession?.answers.filter((item) => item.exampleId !== result.exampleId) ?? []),
+        {
+          exampleId: result.exampleId,
+          status: 'correct',
+          wrongAttempts: result.wrongAttempts,
+          firstTry: result.firstTry,
+          unknownWords: [],
+        },
+      ],
+      wrongAttempts: {
+        ...(trainingSession?.wrongAttempts ?? {}),
+        [result.exampleId]: result.wrongAttempts,
+      },
+    });
   };
 
   const next = async () => {
@@ -105,10 +181,12 @@ export function TrainingPage() {
         mistakeTypes: results.filter((item) => item.wrongAttempts > 0).map((item) => item.type),
       };
       await saveSession(record);
+      await persistTrainingSession({ completed: true, currentIndex: index, reviewShown: true });
       setFinished(true);
       return;
     }
     setIndex(nextIndex);
+    await persistTrainingSession({ currentIndex: nextIndex, reviewShown: nextIndex % 5 === 0 });
     if (nextIndex % 5 === 0) setCheckpoint(nextIndex);
   };
 
@@ -118,10 +196,11 @@ export function TrainingPage() {
     setResults([]);
     setCheckpoint(null);
     setFinished(false);
+    setTrainingSession(null);
   };
 
   if (!queue.length) {
-    return <TrainingSetup setup={setup} setSetup={setSetup} poolCount={pool.length} start={start} />;
+    return <TrainingSetup setup={setup} setSetup={setSetup} poolCount={pool.length} start={start} pending={pendingTrainingSession} resume={resumePending} />;
   }
 
   if (finished) {
@@ -175,11 +254,15 @@ function TrainingSetup({
   setSetup,
   poolCount,
   start,
+  pending,
+  resume,
 }: {
   setup: Setup;
   setSetup: React.Dispatch<React.SetStateAction<Setup>>;
   poolCount: number;
-  start: () => void;
+  start: () => Promise<void>;
+  pending: TrainingSessionRecord | null;
+  resume: () => void;
 }) {
   const update = <K extends keyof Setup>(key: K, value: Setup[K]) => setSetup((current) => ({ ...current, [key]: value }));
   return (
@@ -215,7 +298,17 @@ function TrainingSetup({
             <input type="checkbox" checked={setup.reviewFirst} onChange={(e) => update('reviewFirst', e.target.checked)} />
             <span><strong>ابدأ بأسئلة المراجعة</strong><small>تُعطى الأولوية للأسئلة التي أخطأت فيها سابقًا.</small></span>
           </label>
-          <button className="button button--primary button--large setup-start" type="button" onClick={start} disabled={!poolCount}>
+          {pending && (
+            <div className="resume-session-card">
+              <strong>توجد جلسة غير مكتملة</strong>
+              <span>{pending.questionIds.length} أسئلة · بدأت {new Date(pending.startedAt).toLocaleDateString('ar')}</span>
+              <div>
+                <button className="button button--primary" type="button" onClick={resume}>متابعة الجلسة</button>
+                <button className="button button--secondary" type="button" onClick={() => void start()}>بدء جلسة جديدة</button>
+              </div>
+            </div>
+          )}
+          <button className="button button--primary button--large setup-start" type="button" onClick={() => void start()} disabled={!poolCount}>
             <GraduationCap size={19} /> ابدأ من بين {poolCount} مثالًا
           </button>
         </div>

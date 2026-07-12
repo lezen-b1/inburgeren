@@ -67,9 +67,11 @@ function withEvidenceMetadata(models: ExamModel[]): ExamModel[] {
       ...section,
       questions: section.questions.map((question) => ({
         ...question,
-        evidenceStatus: question.evidence ? 'documented' : 'answer-key-only',
+        evidenceStatus: question.evidenceStatus ?? (question.evidence || question.evidenceText ? 'documented' : 'answer-key-only'),
+        evidence: question.evidence ?? question.evidenceText,
         evidencePage: question.evidencePage ?? section.pdfPageStart ?? undefined,
         evidenceSource: question.evidenceSource ?? model.sourceUrl,
+        sourceDocumentId: question.sourceDocumentId ?? model.id,
       })),
     })),
   }));

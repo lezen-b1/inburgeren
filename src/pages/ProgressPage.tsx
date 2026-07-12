@@ -1,10 +1,21 @@
 import { BarChart3, BookMarked, CircleCheckBig, RotateCcw, Star, Target } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examples, years } from '../lib/data';
+import { deleteExamSession, getExamSessions, type ExamSessionRecord } from '../lib/db';
+import { calculateExamSummary } from '../lib/examScoring';
+import { examModels } from '../lib/exams';
 import { useProgress } from '../lib/ProgressContext';
 
 export function ProgressPage() {
-  const { progress, sessions, ready } = useProgress();
+  const { progress, sessions, ready, deleteTrainingResult } = useProgress();
+  const [examSessions, setExamSessions] = useState<ExamSessionRecord[]>([]);
+  const [expandedExamId, setExpandedExamId] = useState('');
+
+  useEffect(() => {
+    getExamSessions().then(setExamSessions).catch(() => setExamSessions([]));
+  }, []);
+
   const rows = Object.values(progress);
   const answered = rows.filter((row) => row.attempts > 0).length;
   const mastered = rows.filter((row) => row.mastered).length;
@@ -24,6 +35,33 @@ export function ProgressPage() {
     const example = examples.find((item) => item.id === row.exampleId);
     return row.unknownWords.map((word) => ({ word, example }));
   });
+
+  const completedExamSessions = useMemo(() => examSessions.filter((session) => session.completed && !session.abandoned), [examSessions]);
+  const examRows = completedExamSessions.map((session) => {
+    const model = examModels.find((item) => item.id === session.modelId);
+    const section = session.sectionId === 'all' ? null : model?.sections.find((item) => item.id === session.sectionId);
+    const summary = calculateExamSummary(session.answers);
+    return { session, model, section, summary };
+  });
+  const averageExamScore = examRows.length ? Math.round(examRows.reduce((sum, row) => sum + row.summary.scorePercent, 0) / examRows.length) : 0;
+  const bestExamScore = examRows.length ? Math.max(...examRows.map((row) => row.summary.scorePercent)) : 0;
+  const wrongByYear = examRows.reduce<Record<string, number>>((acc, row) => {
+    const key = row.model ? String(row.model.year) : row.session.modelId;
+    acc[key] = (acc[key] ?? 0) + row.summary.wrongAttempts;
+    return acc;
+  }, {});
+  const worstYear = Object.entries(wrongByYear).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'لا يوجد';
+
+  const removeExamSession = async (id: string) => {
+    if (!window.confirm('هل تريد حذف هذه النتيجة من هذا الجهاز؟')) return;
+    await deleteExamSession(id);
+    setExamSessions((current) => current.filter((session) => session.id !== id));
+  };
+
+  const removeTrainingSession = async (id: string) => {
+    if (!window.confirm('هل تريد حذف هذه الجلسة من السجل؟')) return;
+    await deleteTrainingResult(id);
+  };
 
   if (!ready) return <section className="section shell"><div className="loading-card">جارٍ تحميل التقدم…</div></section>;
 
@@ -62,6 +100,47 @@ export function ProgressPage() {
         </section>
       </div>
 
+      <section className="panel-card">
+        <div className="panel-card__head"><div><span className="section-kicker">النماذج الرسمية</span><h2>نتائج النماذج الكاملة</h2></div></div>
+        <div className="metric-grid metric-grid--compact">
+          <Metric icon={<BookMarked />} label="نماذج مكتملة" value={completedExamSessions.length} note="محفوظة محليًا" />
+          <Metric icon={<BarChart3 />} label="متوسط النتيجة" value={`${averageExamScore}%`} note="دون self-check" />
+          <Metric icon={<Target />} label="أفضل نتيجة" value={`${bestExamScore}%`} note="أفضل جلسة مكتملة" />
+          <Metric icon={<RotateCcw />} label="أكثر سنة فيها أخطاء" value={worstYear} note="حسب المحاولات الخاطئة" />
+        </div>
+        {examRows.length ? (
+          <div className="exam-result-list">
+            {examRows.map(({ session, model, section, summary }) => (
+              <article key={session.id} className="exam-result-card">
+                <div>
+                  <strong>{model?.title ?? session.modelId}</strong>
+                  <span>{section?.title ?? 'النموذج كله'}</span>
+                </div>
+                <dl>
+                  <div><dt>تاريخ البدء</dt><dd>{new Date(session.startedAt).toLocaleString('ar')}</dd></div>
+                  <div><dt>تاريخ الإكمال</dt><dd>{session.completedAt ? new Date(session.completedAt).toLocaleString('ar') : 'غير مسجل'}</dd></div>
+                  <div><dt>قابل للتقييم</dt><dd>{summary.automaticallyScoredQuestions}</dd></div>
+                  <div><dt>من أول محاولة</dt><dd>{summary.firstTryCorrect}</dd></div>
+                  <div><dt>بعد الخطأ</dt><dd>{summary.correctedAfterWrong}</dd></div>
+                  <div><dt>محاولات خاطئة</dt><dd>{summary.wrongAttempts}</dd></div>
+                  <div><dt>تقييم ذاتي</dt><dd>{summary.selfCheckCount}</dd></div>
+                  <div><dt>النسبة</dt><dd>{summary.scorePercent}%</dd></div>
+                </dl>
+                {expandedExamId === session.id && (
+                  <div className="exam-result-details">
+                    {session.answers.map((answer) => <span key={answer.questionId}>{answer.questionId}: {answer.status} · أخطاء {answer.wrongAttempts}</span>)}
+                  </div>
+                )}
+                <div className="summary-actions">
+                  <button className="button button--secondary" type="button" onClick={() => setExpandedExamId(expandedExamId === session.id ? '' : session.id)}>عرض التفاصيل</button>
+                  <button className="button button--danger" type="button" onClick={() => void removeExamSession(session.id)}>حذف هذه النتيجة</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : <div className="panel-empty">أكمل نموذجًا رسميًا حتى تظهر النتائج هنا.</div>}
+      </section>
+
       <div className="progress-layout">
         <section className="panel-card">
           <div className="panel-card__head"><div><span className="section-kicker">مفرداتك</span><h2>كلمات لم أفهمها</h2></div><Link className="text-link" to="/library">فتح المكتبة</Link></div>
@@ -70,7 +149,7 @@ export function ProgressPage() {
 
         <section className="panel-card">
           <div className="panel-card__head"><div><span className="section-kicker">السجل</span><h2>الجلسات الأخيرة</h2></div></div>
-          {sessions.length ? <div className="session-list">{sessions.slice(0, 8).map((session) => <article key={session.id}><div><strong>{new Date(session.completedAt).toLocaleDateString('ar')}</strong><span>{session.total} أسئلة</span></div><p>{session.correctFirstTry} من أول مرة</p><small>{session.wrongAttempts} محاولات خاطئة</small></article>)}</div> : <div className="panel-empty">لا توجد جلسات محفوظة بعد.</div>}
+          {sessions.length ? <div className="session-list">{sessions.slice(0, 8).map((session) => <article key={session.id}><div><strong>{new Date(session.completedAt).toLocaleDateString('ar')}</strong><span>{session.total} أسئلة</span></div><p>{session.correctFirstTry} من أول مرة</p><small>{session.wrongAttempts} محاولات خاطئة</small><button className="text-link" type="button" onClick={() => void removeTrainingSession(session.id)}>حذف</button></article>)}</div> : <div className="panel-empty">لا توجد جلسات محفوظة بعد.</div>}
         </section>
       </div>
     </section>

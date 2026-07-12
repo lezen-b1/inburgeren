@@ -7,6 +7,7 @@ import {
   Download,
   GraduationCap,
   Home,
+  ShieldCheck,
   Moon,
   RefreshCw,
   Settings,
@@ -21,6 +22,7 @@ const navItems = [
   { to: '/models', label: 'النماذج', icon: Files },
   { to: '/train', label: 'التدريب', icon: GraduationCap },
   { to: '/progress', label: 'التقدم', icon: BarChart3 },
+  { to: '/sources', label: 'المصادر', icon: ShieldCheck },
   { to: '/settings', label: 'الإعدادات', icon: Settings },
 ];
 

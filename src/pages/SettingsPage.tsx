@@ -5,12 +5,17 @@ import { useToast } from '../lib/ToastContext';
 
 export function SettingsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
-  const { downloadBackup, restoreBackup, clearAll } = useProgress();
+  const { downloadBackup, previewBackup, restoreBackup, clearAll } = useProgress();
   const { showToast } = useToast();
 
   const importFile = async (file: File | undefined) => {
     if (!file) return;
     try {
+      const preview = await previewBackup(file);
+      const ok = window.confirm(
+        `معاينة النسخة الاحتياطية:\nالإصدار: ${preview.version}\nتاريخ التصدير: ${new Date(preview.exportedAt).toLocaleString('ar')}\nالتقدم: ${preview.progressCount}\nجلسات التدريب: ${preview.sessionsCount}\nجلسات النماذج: ${preview.examSessionsCount}\nكلمات غير معروفة: ${preview.unknownWordsCount}\n\nهل تريد الاستيراد الآن؟`,
+      );
+      if (!ok) return;
       await restoreBackup(file);
       showToast('تم استيراد التقدم بنجاح.', 'success');
     } catch (error) {

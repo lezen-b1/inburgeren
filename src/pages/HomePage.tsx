@@ -31,8 +31,8 @@ export function HomePage() {
               </Link>
             </div>
             <div className="hero-modern__metrics" aria-label="ملخص المحتوى">
-              <div><strong>213</strong><span>سؤالًا/مسألة مهيكلة</span></div>
-              <div><strong>2020–2025</strong><span>نماذج رسمية تفاعلية</span></div>
+              <div><strong>197</strong><span>سؤالًا/مسألة مهيكلة</span></div>
+              <div><strong>2020–2025</strong><span>نماذج رسمية، و2025 جزئي</span></div>
               <div><strong>{examples.length}</strong><span>تحليل إعادة صياغة</span></div>
             </div>
           </div>

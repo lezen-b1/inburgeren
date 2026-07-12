@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, CheckCircle2, CircleAlert, FileQuestion, RotateCcw } from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { SourceReader } from '../components/SourceReader';
-import { getIncompleteExamSession, putExamSession, type ExamSessionRecord } from '../lib/db';
+import { abandonExamSession, getIncompleteExamSession, putExamSession, type ExamSessionRecord } from '../lib/db';
 import { calculateExamSummary, emptyExamAnswerRecord, registerExamAttempt, type ExamAnswerRecord } from '../lib/examScoring';
 import { examDataError, examModelById, type ExamQuestion, type ExamSection } from '../lib/exams';
 
@@ -103,8 +103,9 @@ export function ExamPage() {
     });
   };
 
-  const startNew = () => {
+  const startNew = async () => {
     if (pendingSession && !window.confirm('توجد جلسة غير مكتملة لهذا القسم. هل تريد بدء جلسة جديدة بدلًا منها؟')) return;
+    if (pendingSession) await abandonExamSession(pendingSession);
     setPendingSession(null);
     setSession(createSession(model.id, sectionId));
     setFinished(false);
@@ -123,7 +124,7 @@ export function ExamPage() {
       setMobileTab('text');
       return;
     }
-    startNew();
+    void startNew();
     setMobileTab('text');
   };
 
@@ -168,7 +169,7 @@ export function ExamPage() {
           <p>يمكنك متابعة النموذج من السؤال {pendingSession.currentIndex + 1} أو بدء جلسة جديدة لهذا القسم.</p>
           <div className="summary-actions">
             <button className="button button--primary" type="button" onClick={resume}>متابعة الجلسة</button>
-            <button className="button button--ghost" type="button" onClick={startNew}>بدء جلسة جديدة</button>
+            <button className="button button--ghost" type="button" onClick={() => void startNew()}>بدء جلسة جديدة</button>
           </div>
         </div>
       </section>
@@ -277,11 +278,17 @@ export function ExamPage() {
                 {answer.status === 'correct' && <div className="feedback feedback--correct"><CheckCircle2 size={24} /><div><strong>Goed.</strong><p>اختيارك يطابق مفتاح الإجابة الرسمي.</p></div></div>}
                 <section className="answer-panel"><small>الإجابة المعتمدة</small><p lang="nl" dir="ltr">{answerText}</p></section>
                 {current.question.evidence ? (
-                  <div className="evidence-box"><small>الدليل</small><p lang="nl" dir="ltr">{current.question.evidence}</p><a className="text-link" href={sourceHref} target="_blank" rel="noreferrer">فتح صفحة PDF</a></div>
+                  <div className="evidence-box"><small>الدليل · صفحة {current.question.evidencePage ?? pdfPage}</small><p lang="nl" dir="ltr">{current.question.evidence}</p><a className="text-link" href={sourceHref} target="_blank" rel="noreferrer">فتح صفحة PDF</a></div>
                 ) : (
-                  <div className="evidence-box"><small>حالة الدليل</small><p>الإجابة مطابقة لمفتاح الإجابة الرسمي، لكن موضع الدليل التفصيلي لم يُوثق بعد داخل قاعدة البيانات.</p><a className="text-link" href={sourceHref} target="_blank" rel="noreferrer">فتح صفحة PDF للمراجعة</a></div>
+                  <div className="evidence-box evidence-box--muted"><small>حالة الدليل</small><p>الإجابة مطابقة لمفتاح الإجابة الرسمي، لكن موضع الدليل التفصيلي لم يُوثق بعد.</p><a className="text-link" href={sourceHref} target="_blank" rel="noreferrer">فتح صفحة PDF للمراجعة</a></div>
                 )}
-                {current.question.explanation && <div className="arabic-explanation"><div><strong>الشرح</strong><p>{current.question.explanation}</p></div></div>}
+                {(current.question.explanationAr ?? current.question.explanation) && <div className="arabic-explanation"><div><strong>الشرح</strong><p>{current.question.explanationAr ?? current.question.explanation}</p></div></div>}
+                {current.question.wrongOptionExplanations && (
+                  <div className="wrong-options-panel">
+                    <strong>تحليل الاختيارات</strong>
+                    {Object.entries(current.question.wrongOptionExplanations).map(([label, text]) => <p key={label}><span>{label}</span>{text}</p>)}
+                  </div>
+                )}
                 <button className="button button--primary next-question" onClick={next}>{session.currentIndex + 1 === queue.length ? 'إنهاء النموذج' : 'السؤال التالي'} <ArrowLeft size={17} /></button>
               </div>
             )}

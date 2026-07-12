@@ -9,14 +9,15 @@ import {
 } from 'react';
 import {
   clearDatabase,
+  deleteSession,
   emptyProgress,
   exportSnapshot,
   getAllProgress,
   getSessions,
   importSnapshot,
+  previewSnapshot,
   putProgress,
   putSession,
-  type ExportSnapshot,
   type ProgressRecord,
   type SessionRecord,
 } from './db';
@@ -37,6 +38,8 @@ interface ProgressContextValue {
   recordAnswer: (exampleId: string, update: AnswerUpdate) => Promise<void>;
   addUnknownWord: (exampleId: string, word: string) => Promise<void>;
   saveSession: (session: SessionRecord) => Promise<void>;
+  deleteTrainingResult: (id: string) => Promise<void>;
+  previewBackup: (file: File) => Promise<ReturnType<typeof previewSnapshot>>;
   downloadBackup: () => Promise<void>;
   restoreBackup: (file: File) => Promise<void>;
   clearAll: () => Promise<void>;
@@ -127,6 +130,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setSessions((current) => [session, ...current.filter((item) => item.id !== session.id)]);
   }, []);
 
+  const deleteTrainingResult = useCallback(async (id: string) => {
+    await deleteSession(id);
+    setSessions((current) => current.filter((item) => item.id !== id));
+  }, []);
+
   const downloadBackup = useCallback(async () => {
     const snapshot = await exportSnapshot();
     const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
@@ -138,9 +146,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     URL.revokeObjectURL(url);
   }, []);
 
+  const previewBackup = useCallback(async (file: File) => previewSnapshot(JSON.parse(await file.text())), []);
+
   const restoreBackup = useCallback(
     async (file: File) => {
-      const snapshot = JSON.parse(await file.text()) as ExportSnapshot;
+      const snapshot = JSON.parse(await file.text()) as unknown;
       await importSnapshot(snapshot);
       await reload();
     },
@@ -164,6 +174,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       recordAnswer,
       addUnknownWord,
       saveSession,
+      deleteTrainingResult,
+      previewBackup,
       downloadBackup,
       restoreBackup,
       clearAll,
@@ -178,6 +190,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       recordAnswer,
       addUnknownWord,
       saveSession,
+      deleteTrainingResult,
+      previewBackup,
       downloadBackup,
       restoreBackup,
       clearAll,
