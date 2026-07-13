@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: ['icon-192.png', 'icon-512.png', 'maskable-512.png'],
       manifest: {
         name: 'NT2 Lezen B1 — Exam Lab 2023–2025',
@@ -32,6 +32,8 @@ export default defineConfig({
       },
       workbox: {
         cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff2}'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         runtimeCaching: [

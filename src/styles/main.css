@@ -457,6 +457,7 @@
   .footer__inner { display: flex; justify-content: space-between; gap: 2rem; align-items: center; }
   .footer p { color: var(--muted); margin-top: .25rem; }
   .local-note { max-width: 360px; }
+  .release-note { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: .15rem .55rem; background: var(--surface-soft); font-size: .78rem; font-weight: 800; }
 
   .toast-stack { position: fixed; z-index: 300; inset-inline-end: 1rem; inset-block-end: 1rem; display: grid; gap: .55rem; pointer-events: none; }
   .toast { min-width: min(340px, calc(100vw - 2rem)); border-radius: 14px; padding: .8rem 1rem; color: white; background: var(--purple-950); box-shadow: var(--shadow-3); animation: toastIn .25s var(--ease); }

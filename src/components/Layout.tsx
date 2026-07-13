@@ -17,6 +17,8 @@ import {
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useToast } from '../lib/ToastContext';
 
+const APP_RELEASE = 'v14 - مكتبة علاقات المعنى';
+
 const navItems = [
   { to: '/home', label: 'الرئيسية', icon: Home },
   { to: '/library', label: 'المكتبة', icon: BookOpenText },
@@ -153,6 +155,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <div>
             <strong>NT2 Lezen B1 · Parafrase Lab</strong>
             <p>أداة تدريب غير رسمية مخصصة لنماذج Lezen I للأعوام 2023 و2024 و2025.</p>
+            <p className="release-note">{APP_RELEASE}</p>
           </div>
           <p className="local-note">يُحفظ تقدمك محليًا في هذا المتصفح، ويمكن تصديره من الإعدادات.</p>
         </div>
