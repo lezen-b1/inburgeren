@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Download, ExternalLink, FileWarning, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, FileWarning, X } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { PdfCanvasViewer } from '../components/PdfCanvasViewer';
 import { publicAssetUrl } from '../lib/assetUrl';
@@ -61,7 +61,6 @@ export function PdfViewerPage() {
           <button className="icon-button" type="button" onClick={() => setPage(page - 1)} disabled={page <= 1} title="الصفحة السابقة"><ArrowRight size={18} /></button>
           <span>صفحة {page}</span>
           <button className="icon-button" type="button" onClick={() => setPage(page + 1)} title="الصفحة التالية"><ArrowLeft size={18} /></button>
-          <a className="icon-button" href={pdfUrl} target="_blank" rel="noopener noreferrer" title="فتح الملف الخام"><ExternalLink size={18} /><span>الأصلي</span></a>
           <a className="icon-button" href={pdfUrl} download title="تنزيل PDF"><Download size={18} /><span>تنزيل</span></a>
           <Link className="icon-button" to="/models" title="إغلاق"><X size={18} /><span>إغلاق</span></Link>
         </div>

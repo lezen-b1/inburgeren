@@ -15,9 +15,9 @@ export default defineConfig({
       manifest: {
         name: 'NT2 Lezen B1 — Exam Lab 2023–2025',
         short_name: 'Lezen B1',
-        description: 'تدريب موثق على نماذج Lezen B1 الرسمية للأعوام 2023 و2024 و2025.',
-        lang: 'ar',
-        dir: 'rtl',
+        description: 'Oefentool voor de openbare NT2 Lezen B1 examens van 2023, 2024 en 2025.',
+        lang: 'nl',
+        dir: 'ltr',
         display: 'standalone',
         orientation: 'portrait-primary',
         theme_color: '#2e1065',

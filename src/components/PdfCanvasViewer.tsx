@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AlertTriangle, ExternalLink, FileText, RefreshCw } from 'lucide-react';
+import { AlertTriangle, FileText, RefreshCw } from 'lucide-react';
 import {
   GlobalWorkerOptions,
   getDocument,
@@ -163,10 +163,6 @@ export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = 
           <RefreshCw size={16} />
           {t('alternateView')}
         </button>
-        <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
-          <ExternalLink size={16} />
-          {t('openRawFile')}
-        </a>
       </div>
       <div className="pdf-canvas-viewer__stage" aria-busy={status === 'loading'}>
         {mode === 'native' ? (
@@ -189,16 +185,10 @@ export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = 
             <AlertTriangle size={22} />
             <strong>{error.title}</strong>
             <p>{error.detail}</p>
-            <div className="pdf-canvas-viewer__actions">
-              <button type="button" className="button button--primary" onClick={() => setRetryKey((value) => value + 1)}>
-                <RefreshCw size={16} />
-                {t('retry')}
-              </button>
-              <a className="button button--secondary" href={pdfUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink size={16} />
-                {t('openOriginalFile')}
-              </a>
-            </div>
+            <button type="button" className="button button--primary" onClick={() => setRetryKey((value) => value + 1)}>
+              <RefreshCw size={16} />
+              {t('retry')}
+            </button>
           </div>
         ) : null}
       </div>
