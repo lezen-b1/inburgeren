@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Filter, RotateCcw, Search, Shuffle, XCircle } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { levelLabels, skillLabels, transformationTypes, years } from '../lib/data';
+import { transformationTypes, years } from '../lib/data';
 import { useProgress } from '../lib/ProgressContext';
 import { usePageMeta } from '../lib/pageMeta';
 import { normalizeText } from '../lib/search';
 import { paraphrasePairs, type ParaphrasePair } from '../lib/paraphrasePairs';
 import { useToast } from '../lib/ToastContext';
+import { useI18n } from '../lib/i18n';
 
 const PAGE_SIZE = 12;
 
@@ -69,6 +70,7 @@ function filterPairs(filters: PairFilters, progress: ReturnType<typeof useProgre
 }
 
 function LibraryQuizCard({ pair, forceOpen = false }: { pair: ParaphrasePair; forceOpen?: boolean }) {
+  const { locale, t, skillLabel, levelLabel } = useI18n();
   const { get, toggle, recordAnswer } = useProgress();
   const [selected, setSelected] = useState('');
   const [hadWrong, setHadWrong] = useState(false);
@@ -76,6 +78,10 @@ function LibraryQuizCard({ pair, forceOpen = false }: { pair: ParaphrasePair; fo
   const progress = get(pair.exampleId);
   const options = useMemo(() => makeOptions(pair), [pair]);
   const correct = selected === pair.right;
+  const meaning = locale === 'ar'
+    ? pair.meaning
+    : t(pair.sourceType === 'official-question' ? 'officialQuestionMeaning' : 'curatedMeaningFallback', { question: pair.questionNo });
+  const sourceDescription = locale === 'ar' ? pair.transformationType : skillLabel(pair.skill);
 
   useEffect(() => {
     setSelected('');
@@ -98,30 +104,30 @@ function LibraryQuizCard({ pair, forceOpen = false }: { pair: ParaphrasePair; fo
         <div className="chip-row">
           <span className="chip chip--purple">{pair.year}</span>
           <span className="chip">Vraag {pair.questionNo}</span>
-          <span className="chip">{levelLabels[pair.level]}</span>
-          <span className="chip">{skillLabels[pair.skill]}</span>
+          <span className="chip">{levelLabel(pair.level)}</span>
+          <span className="chip">{skillLabel(pair.skill)}</span>
         </div>
         <button
           className={`small-icon-button${progress.favorite ? ' is-active' : ''}`}
           type="button"
           onClick={() => void toggle(pair.exampleId, 'favorite')}
           aria-pressed={progress.favorite}
-          title="المفضلة"
+          title={t('favorite')}
         >
           ★
         </button>
       </header>
 
       <section className="question-panel library-prompt">
-        <small>في النص قد تأتي بهذا الشكل</small>
+        <small>{t('textMaySay')}</small>
         <p lang="nl" dir="ltr">{pair.left}</p>
-        <span>اختر الصياغة التي تحمل المعنى نفسه في السؤال أو الجواب.</span>
+        <span>{t('chooseSameMeaning')}</span>
       </section>
 
       <div className="meaning-choice-panel">
         <div className="meaning-choice-panel__head">
-          <strong>أي عبارة تقابلها؟</strong>
-          <span>{selected ? (correct ? 'صحيح' : 'حاول مرة أخرى') : 'اختر من 3'}</span>
+          <strong>{t('whichPhraseMatches')}</strong>
+          <span>{selected ? (correct ? t('correct') : t('tryAgain')) : t('chooseThree')}</span>
         </div>
         <div className="meaning-options">
           {options.map((option) => {
@@ -144,13 +150,13 @@ function LibraryQuizCard({ pair, forceOpen = false }: { pair: ParaphrasePair; fo
         {selected && !correct && (
           <div className="feedback feedback--wrong" role="status">
             <XCircle size={21} />
-            <div><strong>ليست الأقرب</strong><p>ابحث عن نفس الفكرة، لا عن كلمة تشبهها فقط.</p></div>
+            <div><strong>{t('notClosest')}</strong><p>{t('sameIdeaNotSimilarWord')}</p></div>
           </div>
         )}
         {correct && (
           <div className="feedback feedback--correct" role="status">
             <CheckCircle2 size={21} />
-            <div><strong>صحيح</strong><p>{pair.meaning}</p></div>
+            <div><strong>{t('correct')}</strong><p>{meaning}</p></div>
           </div>
         )}
       </div>
@@ -168,8 +174,8 @@ function LibraryQuizCard({ pair, forceOpen = false }: { pair: ParaphrasePair; fo
             </div>
           </section>
           <section className="arabic-explanation">
-            <div><strong>المعنى</strong><p>{pair.meaning}</p></div>
-            <div><strong>من أين جاءت؟</strong><p>{pair.title} · {pair.transformationType}</p></div>
+            <div><strong>{t('meaning')}</strong><p>{meaning}</p></div>
+            <div><strong>{t('whereFrom')}</strong><p>{pair.title} · {sourceDescription}</p></div>
           </section>
         </div>
       )}
@@ -180,20 +186,21 @@ function LibraryQuizCard({ pair, forceOpen = false }: { pair: ParaphrasePair; fo
           type="button"
           onClick={() => void toggle(pair.exampleId, 'mastered')}
           aria-pressed={progress.mastered}
-        >{progress.mastered ? 'متقنة' : 'تعلّمتها'}</button>
+        >{progress.mastered ? t('learnedDone') : t('learned')}</button>
         <button
           className={`learning-toggle${progress.review ? ' is-active is-review' : ''}`}
           type="button"
           onClick={() => void toggle(pair.exampleId, 'review')}
           aria-pressed={progress.review}
-        >{progress.review ? 'ضمن المراجعة' : 'تحتاج مراجعة'}</button>
+        >{progress.review ? t('inReview') : t('addReview')}</button>
       </footer>
     </article>
   );
 }
 
 export function LibraryPage() {
-  usePageMeta('المكتبة');
+  const { locale, t, skillLabel, levelLabel } = useI18n();
+  usePageMeta(t('libraryMeta'));
   const [searchParams, setSearchParams] = useSearchParams();
   const { progress } = useProgress();
   const { showToast } = useToast();
@@ -235,14 +242,14 @@ export function LibraryPage() {
     setFilters(defaultFilters);
     setPage(1);
     setTargetPair('');
-    showToast('تمت إعادة الفلاتر.', 'info');
+    showToast(t('filtersReset'), 'info');
   };
 
   const random = () => {
     const pool = filtered.length ? filtered : paraphrasePairs;
     if (!filtered.length) {
       setFilters(defaultFilters);
-      showToast('لم توجد نتائج؛ أزيلت الفلاتر واختيرت عبارة من المكتبة كاملة.', 'warning');
+      showToast(t('noResultsReset'), 'warning');
     }
     const item = pool[Math.floor(Math.random() * pool.length)];
     setTargetPair(item.id);
@@ -255,19 +262,19 @@ export function LibraryPage() {
     <section className="section shell library-page">
       <div className="page-heading">
         <div>
-          <span className="section-kicker">مكتبة تفاعلية</span>
-          <h1>تدريب إعادة الصياغة</h1>
-          <p>كل بطاقة تعرض عبارة واحدة من النص وثلاثة اختيارات. الخيار الصحيح هو الصياغة المختلفة التي تحمل المعنى نفسه في السؤال أو الجواب.</p>
+          <span className="section-kicker">{t('interactiveLibrary')}</span>
+          <h1>{t('paraphraseTraining')}</h1>
+          <p>{t('libraryIntro')}</p>
         </div>
         <div className="page-heading__actions">
-          <button className="button button--secondary" type="button" onClick={random}><Shuffle size={17} /> عبارة عشوائية</button>
-          <button className="button button--ghost" type="button" onClick={reset}><RotateCcw size={17} /> إعادة الضبط</button>
+          <button className="button button--secondary" type="button" onClick={random}><Shuffle size={17} /> {t('randomPhrase')}</button>
+          <button className="button button--ghost" type="button" onClick={reset}><RotateCcw size={17} /> {t('resetFilters')}</button>
         </div>
       </div>
 
       <div className="filter-panel library-filters">
         <div className="search-control">
-          <label htmlFor="library-search">البحث</label>
+          <label htmlFor="library-search">{t('search')}</label>
           <div className="search-control__input">
             <Search size={19} aria-hidden="true" />
             <input
@@ -275,37 +282,37 @@ export function LibraryPage() {
               type="search"
               value={filters.query}
               onChange={(event) => update('query', event.target.value)}
-              placeholder="مثال: hard werken، toestemming، النفي"
+              placeholder={t('searchPlaceholder')}
             />
           </div>
         </div>
 
         <div className="filter-grid">
-          <label><span>السنة</span><select value={filters.year} onChange={(e) => update('year', e.target.value)}>
-            <option value="">كل السنوات</option>{years.map((year) => <option key={year}>{year}</option>)}
+          <label><span>{t('year')}</span><select value={filters.year} onChange={(e) => update('year', e.target.value)}>
+            <option value="">{t('allYears')}</option>{years.map((year) => <option key={year}>{year}</option>)}
           </select></label>
-          <label><span>المستوى</span><select value={filters.level} onChange={(e) => update('level', e.target.value)}>
-            <option value="">كل المستويات</option>{Object.entries(levelLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          <label><span>{t('level')}</span><select value={filters.level} onChange={(e) => update('level', e.target.value)}>
+            <option value="">{t('allLevels')}</option>{['beginner', 'intermediate', 'advanced'].map((value) => <option key={value} value={value}>{levelLabel(value)}</option>)}
           </select></label>
-          <label><span>المهارة</span><select value={filters.skill} onChange={(e) => update('skill', e.target.value)}>
-            <option value="">كل المهارات</option>{Object.entries(skillLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          <label><span>{t('skill')}</span><select value={filters.skill} onChange={(e) => update('skill', e.target.value)}>
+            <option value="">{t('allSkills')}</option>{['synonyms', 'negation', 'cause-effect', 'grammar-transform', 'inference-summary'].map((value) => <option key={value} value={value}>{skillLabel(value)}</option>)}
           </select></label>
-          <label><span>نوع التحويل</span><select value={filters.type} onChange={(e) => update('type', e.target.value)}>
-            <option value="">كل الأنواع</option>{transformationTypes.map((type) => <option key={type}>{type}</option>)}
+          <label><span>{t('transformType')}</span><select value={filters.type} onChange={(e) => update('type', e.target.value)}>
+            <option value="">{t('allTypes')}</option>{transformationTypes.map((type) => <option key={type} value={type}>{locale === 'ar' ? type : t('meaningRelation')}</option>)}
           </select></label>
-          <label><span>الحالة</span><select value={filters.status} onChange={(e) => update('status', e.target.value as PairFilters['status'])}>
-            <option value="all">كل الحالات</option><option value="favorite">المفضلة فقط</option><option value="review">بحاجة إلى مراجعة</option><option value="mastered">المتقنة فقط</option>
+          <label><span>{t('status')}</span><select value={filters.status} onChange={(e) => update('status', e.target.value as PairFilters['status'])}>
+            <option value="all">{t('allStatuses')}</option><option value="favorite">{t('favoriteOnly')}</option><option value="review">{t('reviewOnly')}</option><option value="mastered">{t('masteredOnly')}</option>
           </select></label>
-          <label><span>الترتيب</span><select value={filters.sort} onChange={(e) => update('sort', e.target.value as PairFilters['sort'])}>
-            <option value="year-asc">الأقدم أولًا</option><option value="year-desc">الأحدث أولًا</option><option value="question">رقم السؤال</option><option value="title">عنوان النص</option>
+          <label><span>{t('sort')}</span><select value={filters.sort} onChange={(e) => update('sort', e.target.value as PairFilters['sort'])}>
+            <option value="year-asc">{t('oldestFirst')}</option><option value="year-desc">{t('newestFirst')}</option><option value="question">{t('questionNumber')}</option><option value="title">{t('textTitle')}</option>
           </select></label>
         </div>
-        <div className="filter-panel__note"><Filter size={16} /> ليست قائمة كلمات عامة؛ هذه علاقات معنى مستنتجة من أسئلة النماذج.</div>
+        <div className="filter-panel__note"><Filter size={16} /> {t('notGeneralWordList')}</div>
       </div>
 
       <div className="results-line" role="status" aria-live="polite">
-        <span><strong>{filtered.length}</strong> علاقة معنى</span>
-        {filters.query && <span className="query-pill">بحث: {filters.query}</span>}
+        <span><strong>{filtered.length}</strong> {filtered.length === 1 ? t('meaningRelation') : t('meaningRelations')}</span>
+        {filters.query && <span className="query-pill">{t('query')}: {filters.query}</span>}
       </div>
 
       {pageItems.length ? (
@@ -315,19 +322,19 @@ export function LibraryPage() {
       ) : (
         <div className="empty-state">
           <Search size={34} />
-          <h2>لا توجد نتائج مطابقة</h2>
-          <p>غيّر كلمة البحث أو أزل بعض الفلاتر.</p>
-          <button className="button button--primary" type="button" onClick={reset}>عرض جميع العبارات</button>
+          <h2>{t('noMatchingResults')}</h2>
+          <p>{t('changeSearch')}</p>
+          <button className="button button--primary" type="button" onClick={reset}>{t('showAllPhrases')}</button>
         </div>
       )}
 
       {totalPages > 1 && (
-        <nav className="pagination" aria-label="صفحات النتائج">
-          <button disabled={page === 1} onClick={() => setPage((value) => value - 1)}>السابق</button>
+        <nav className="pagination" aria-label={t('resultPages')}>
+          <button disabled={page === 1} onClick={() => setPage((value) => value - 1)}>{t('previous')}</button>
           {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
             <button key={number} aria-current={number === page ? 'page' : undefined} onClick={() => setPage(number)}>{number}</button>
           ))}
-          <button disabled={page === totalPages} onClick={() => setPage((value) => value + 1)}>التالي</button>
+          <button disabled={page === totalPages} onClick={() => setPage((value) => value + 1)}>{t('next')}</button>
         </nav>
       )}
     </section>

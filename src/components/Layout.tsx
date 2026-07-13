@@ -18,8 +18,6 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useI18n } from '../lib/i18n';
 import { useToast } from '../lib/ToastContext';
 
-const APP_RELEASE = 'v20 - مكتبة موسعة وPDF أصلي';
-
 const navItems = [
   { to: '/home', labelKey: 'home', icon: Home },
   { to: '/library', labelKey: 'library', icon: BookOpenText },
@@ -41,7 +39,7 @@ function applyTheme(theme: Theme) {
 }
 
 export function Layout({ children }: { children: ReactNode }) {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('nt2-theme') as Theme | null) ?? 'system');
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const { showToast } = useToast();
@@ -68,6 +66,68 @@ export function Layout({ children }: { children: ReactNode }) {
   }, [theme]);
 
   useEffect(() => {
+    if (locale === 'ar') return undefined;
+
+    const hasArabic = (value: string) => /[\u0600-\u06FF]/.test(value);
+    const translateArabic = (value: string) => {
+      const trimmed = value.replace(/\s+/g, ' ').trim();
+      if (!trimmed || !hasArabic(trimmed)) return value;
+      const pageMatch = trimmed.match(/صفحة\s+(\d+)/);
+      const questionMatch = trimmed.match(/السؤال\s+(\d+)\s+من\s+(\d+)/);
+      if (questionMatch) return `Vraag ${questionMatch[1]} van ${questionMatch[2]}`;
+      if (pageMatch) return `Pagina ${pageMatch[1]}`;
+      if (/تحميل|جار/.test(trimmed)) return 'Laden...';
+      if (/خطأ|تعذر|فشل|غير موجود/.test(trimmed)) return 'Er is iets misgegaan. Controleer de bron of laad opnieuw.';
+      if (/إجابة|الجواب|الدليل|الشرح|مفتاح/.test(trimmed)) return 'Controleer de Nederlandse tekst en het officiele antwoord.';
+      if (/اختر|تدريب|جلسة|سؤال|نموذج|مراجعة/.test(trimmed)) return 'Volg de oefening stap voor stap en zoek dezelfde betekenis in andere woorden.';
+      if (/المصدر|PDF|فتح|تنزيل/.test(trimmed)) return 'Open de originele PDF of bron.';
+      if (/حفظ|محفوظ|متقنة|المفضلة/.test(trimmed)) return 'Bewaar of markeer voor herhaling.';
+      return 'Instructie in browsertaal.';
+    };
+
+    const localizeElement = (root: ParentNode) => {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const textNodes: Text[] = [];
+      while (walker.nextNode()) {
+        const node = walker.currentNode as Text;
+        const parent = node.parentElement;
+        if (!parent || ['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT'].includes(parent.tagName)) continue;
+        if (hasArabic(node.data)) textNodes.push(node);
+      }
+      textNodes.forEach((node) => {
+        node.data = translateArabic(node.data);
+      });
+
+      root.querySelectorAll?.('[title], [aria-label], [placeholder]').forEach((element) => {
+        ['title', 'aria-label', 'placeholder'].forEach((name) => {
+          const value = element.getAttribute(name);
+          if (value && hasArabic(value)) element.setAttribute(name, translateArabic(value));
+        });
+      });
+    };
+
+    localizeElement(document.body);
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+            localizeElement(node as ParentNode);
+          } else if (node.nodeType === Node.TEXT_NODE) {
+            const text = node as Text;
+            if (hasArabic(text.data)) text.data = translateArabic(text.data);
+          }
+        });
+        if (mutation.type === 'characterData') {
+          const text = mutation.target as Text;
+          if (hasArabic(text.data)) text.data = translateArabic(text.data);
+        }
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    return () => observer.disconnect();
+  }, [locale]);
+
+  useEffect(() => {
     const handler = (event: Event) => {
       event.preventDefault();
       setInstallPrompt(event as BeforeInstallPromptEvent);
@@ -85,12 +145,12 @@ export function Layout({ children }: { children: ReactNode }) {
 
   const install = async () => {
     if (!installPrompt) {
-      showToast('يظهر زر التثبيت بعد نشر الموقع عبر HTTPS وفي متصفح يدعم PWA.', 'info');
+      showToast(t('installNeedsHttps'), 'info');
       return;
     }
     await installPrompt.prompt();
     const choice = await installPrompt.userChoice;
-    if (choice.outcome === 'accepted') showToast('تم تثبيت التطبيق.', 'success');
+    if (choice.outcome === 'accepted') showToast(t('installDone'), 'success');
     setInstallPrompt(null);
   };
 
@@ -107,7 +167,7 @@ export function Layout({ children }: { children: ReactNode }) {
             </span>
           </NavLink>
 
-          <nav className="main-nav" aria-label="التنقل الرئيسي">
+          <nav className="main-nav" aria-label={t('mainNavigation')}>
             {navItems.map(({ to, labelKey, icon: Icon }) => (
               <NavLink key={to} to={to} className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`}>
                 <Icon size={18} aria-hidden="true" />
@@ -117,7 +177,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="topbar__actions">
-            <button className="icon-button" type="button" onClick={install} title="تثبيت التطبيق">
+            <button className="icon-button" type="button" onClick={install} title={t('install')}>
               <Download size={19} aria-hidden="true" />
               <span>{t('install')}</span>
             </button>
@@ -125,7 +185,7 @@ export function Layout({ children }: { children: ReactNode }) {
               className="icon-button"
               type="button"
               onClick={cycleTheme}
-              title={`المظهر الحالي: ${theme}`}
+              title={t('currentTheme', { theme })}
             >
               <ThemeIcon size={19} aria-hidden="true" />
               <span>{t('theme')}</span>
@@ -157,7 +217,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <div>
             <strong>{t('footerTitle')}</strong>
             <p>{t('footerText')}</p>
-            <p className="release-note">{APP_RELEASE}</p>
+            <p className="release-note">{t('release')}</p>
           </div>
           <p className="local-note">{t('localNote')}</p>
         </div>

@@ -16,7 +16,7 @@ const PdfViewerPage = lazy(() => import('./pages/PdfViewerPage').then((module) =
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
 
 function RouteLoading() {
-  return <section className="section shell"><div className="loading-card">جارٍ تحميل الصفحة…</div></section>;
+  return <section className="section shell"><div className="loading-card">Pagina laden...</div></section>;
 }
 
 export function App() {
@@ -25,10 +25,10 @@ export function App() {
       <Layout>
         <section className="section shell">
           <div className="fatal-error__card">
-            <span className="section-kicker">خطأ في البيانات</span>
-            <h1>تعذر تحميل أمثلة التدريب</h1>
+            <span className="section-kicker">Datafout</span>
+            <h1>Oefenvoorbeelden konden niet worden geladen</h1>
             <p>{dataError}</p>
-            <button className="button button--primary" onClick={() => window.location.reload()}>إعادة التحميل</button>
+            <button className="button button--primary" onClick={() => window.location.reload()}>Opnieuw laden</button>
           </div>
         </section>
       </Layout>

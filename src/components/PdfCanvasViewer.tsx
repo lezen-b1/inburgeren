@@ -10,6 +10,7 @@ import {
 } from 'pdfjs-dist';
 import { isPdfRenderCancellation, toSafePdfPage } from './PdfCanvasViewer.utils';
 import { PDF_WORKER_URL } from './PdfCanvasViewer.worker';
+import { useI18n } from '../lib/i18n';
 
 GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
 
@@ -28,11 +29,11 @@ interface PdfError {
   detail: string;
 }
 
-function toPdfError(error: unknown): PdfError {
+function toPdfError(error: unknown, t: (key: string) => string): PdfError {
   if (isPdfRenderCancellation(error)) {
     return {
-      title: 'تم إيقاف العرض السابق',
-      detail: 'جار تحديث الصفحة، حاول مرة أخرى إذا لم يظهر الملف.',
+      title: t('pdfStoppedTitle'),
+      detail: t('pdfStoppedDetail'),
     };
   }
 
@@ -41,32 +42,33 @@ function toPdfError(error: unknown): PdfError {
 
   if (lowerMessage.includes('worker')) {
     return {
-      title: 'تعذر تشغيل عارض PDF',
-      detail: 'تعذر تحميل عامل PDF المحلي. افتح الملف الأصلي أو أعد المحاولة.',
+      title: t('pdfWorkerTitle'),
+      detail: t('pdfWorkerDetail'),
     };
   }
 
   if (lowerMessage.includes('missing') || lowerMessage.includes('404') || lowerMessage.includes('not found')) {
     return {
-      title: 'ملف PDF غير موجود',
-      detail: 'الرابط لا يعيد ملف PDF صالحًا. افتح الملف الأصلي أو تحقق من وجوده داخل sources.',
+      title: t('pdfMissingTitle'),
+      detail: t('pdfMissingDetail'),
     };
   }
 
   if (lowerMessage.includes('invalid') || lowerMessage.includes('corrupt') || lowerMessage.includes('pdf')) {
     return {
-      title: 'تعذر قراءة ملف PDF',
-      detail: 'قد يكون الملف تالفًا أو أن الاستجابة ليست PDF. جرّب فتح الملف الأصلي.',
+      title: t('pdfInvalidTitle'),
+      detail: t('pdfInvalidDetail'),
     };
   }
 
   return {
-    title: 'تعذر عرض PDF',
-    detail: 'حدث خطأ أثناء تحميل أو رسم الصفحة. أعد المحاولة أو افتح الملف الأصلي.',
+    title: t('pdfGenericTitle'),
+    detail: t('pdfGenericDetail'),
   };
 }
 
 export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = false, preferCanvas = false }: PdfCanvasViewerProps) {
+  const { t } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [mode, setMode] = useState<'native' | 'canvas'>(preferCanvas ? 'canvas' : 'native');
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(preferCanvas ? 'loading' : 'ready');
@@ -109,7 +111,7 @@ export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = 
         const context = canvas.getContext('2d');
 
         if (!context) {
-          throw new Error('تعذر إنشاء سياق Canvas لعرض PDF.');
+          throw new Error(t('pdfCanvasContext'));
         }
 
         canvas.width = Math.ceil(viewport.width);
@@ -134,7 +136,7 @@ export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = 
         }
 
         if (!cancelled) {
-          setError(toPdfError(renderError));
+          setError(toPdfError(renderError, t));
           setStatus('error');
         }
       }
@@ -155,15 +157,15 @@ export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = 
       <div className="pdf-canvas-viewer__toolbar">
         <button className={`pdf-mode-button${mode === 'native' ? ' is-active' : ''}`} type="button" onClick={() => setMode('native')}>
           <FileText size={16} />
-          PDF الأصلي
+          {t('originalPdf')}
         </button>
         <button className={`pdf-mode-button${mode === 'canvas' ? ' is-active' : ''}`} type="button" onClick={() => setMode('canvas')}>
           <RefreshCw size={16} />
-          عرض بديل
+          {t('alternateView')}
         </button>
         <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
           <ExternalLink size={16} />
-          فتح الملف الخام
+          {t('openRawFile')}
         </a>
       </div>
       <div className="pdf-canvas-viewer__stage" aria-busy={status === 'loading'}>
@@ -178,7 +180,7 @@ export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = 
         {mode === 'canvas' && status === 'loading' ? (
           <div className="pdf-canvas-viewer__state">
             <RefreshCw size={20} />
-            <span>جار تحميل PDF...</span>
+            <span>{t('loadingPdf')}</span>
           </div>
         ) : null}
 
@@ -190,11 +192,11 @@ export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = 
             <div className="pdf-canvas-viewer__actions">
               <button type="button" className="button button--primary" onClick={() => setRetryKey((value) => value + 1)}>
                 <RefreshCw size={16} />
-                إعادة المحاولة
+                {t('retry')}
               </button>
               <a className="button button--secondary" href={pdfUrl} target="_blank" rel="noopener noreferrer">
                 <ExternalLink size={16} />
-                فتح الملف الأصلي
+                {t('openOriginalFile')}
               </a>
             </div>
           </div>

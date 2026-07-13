@@ -26,16 +26,16 @@ export class ErrorBoundary extends Component<Props, State> {
       <main className="fatal-error shell">
         <div className="fatal-error__card">
           <span className="eyebrow">Technische fout</span>
-          <h1>تعذّر تحميل الموقع بصورة صحيحة</h1>
+          <h1>De site kon niet goed worden geladen</h1>
           <p>
-            تأكد من رفع جميع الملفات الموجودة داخل مجلد <code>dist</code>، ثم أعد تحميل الصفحة.
+            Controleer of alle bestanden uit de map <code>dist</code> zijn geupload en laad de pagina opnieuw.
           </p>
           <details>
-            <summary>التفاصيل التقنية</summary>
+            <summary>Technische details</summary>
             <pre>{this.state.message}</pre>
           </details>
           <button className="button button--primary" onClick={() => window.location.reload()}>
-            إعادة التحميل
+            Opnieuw laden
           </button>
         </div>
       </main>

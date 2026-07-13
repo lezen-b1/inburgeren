@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Bookmark, Check, CheckCircle2, EyeOff, RotateCcw, Share2, Star, XCircle } from 'lucide-react';
 import type { Example } from '../lib/schema';
-import { levelLabels, skillLabels } from '../lib/data';
 import { paraphrasePairs, type ParaphrasePair } from '../lib/paraphrasePairs';
 import { useProgress } from '../lib/ProgressContext';
 import { useToast } from '../lib/ToastContext';
 import { SourceLink } from './SourceLink';
+import { useI18n } from '../lib/i18n';
 
 function optionSeed(pair: ParaphrasePair) {
   return pair.id.split('').reduce((sum, char, index) => sum + char.charCodeAt(0) * (index + 5), pair.questionNo);
@@ -44,6 +44,7 @@ function makeMeaningOptions(pair: ParaphrasePair) {
 }
 
 export function StudyCard({ example, forceOpen = false }: { example: Example; forceOpen?: boolean }) {
+  const { locale, t, skillLabel, levelLabel } = useI18n();
   const [selected, setSelected] = useState('');
   const [hadWrong, setHadWrong] = useState(false);
   const [revealed, setRevealed] = useState(forceOpen);
@@ -56,6 +57,8 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
   const options = useMemo(() => makeMeaningOptions(primaryPair), [primaryPair]);
   const answered = selected.length > 0;
   const correct = selected === primaryPair.right;
+  const meaning = locale === 'ar' ? example.meaning : t('curatedMeaningFallback');
+  const explanation = locale === 'ar' ? example.explanation : t('curatedExplanationFallback');
 
   useEffect(() => {
     setSelected('');
@@ -92,9 +95,9 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
     try {
       if (navigator.share) await navigator.share(payload);
       else await navigator.clipboard.writeText(url);
-      showToast(window.location.protocol === 'file:' ? 'نُسخ رابط محلي؛ يصبح قابلًا للمشاركة بعد نشر الموقع.' : 'تم تجهيز رابط نظيف لهذا المثال.', 'success');
+      showToast(window.location.protocol === 'file:' ? t('localLinkCopied') : t('shareLinkReady'), 'success');
     } catch (error) {
-      if ((error as DOMException).name !== 'AbortError') showToast('تعذّر نسخ الرابط في هذا المتصفح.', 'warning');
+      if ((error as DOMException).name !== 'AbortError') showToast(t('copyFailed'), 'warning');
     }
   };
 
@@ -102,7 +105,7 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
     if (!word.trim()) return;
     await addUnknownWord(example.id, word);
     setWord('');
-    showToast('أضيفت الكلمة إلى قائمة الكلمات غير المفهومة.', 'success');
+    showToast(t('wordSaved'), 'success');
   };
 
   return (
@@ -111,8 +114,8 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
         <div className="chip-row">
           <span className="chip chip--purple">{example.year}</span>
           <span className="chip">Vraag {example.questionNo}</span>
-          <span className="chip">{levelLabels[example.level]}</span>
-          <span className="chip">{skillLabels[example.skill]}</span>
+          <span className="chip">{levelLabel(example.level)}</span>
+          <span className="chip">{skillLabel(example.skill)}</span>
         </div>
         <div className="card-action-row">
           <button
@@ -120,9 +123,9 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
             type="button"
             onClick={() => void toggle(example.id, 'favorite')}
             aria-pressed={progress.favorite}
-            title="المفضلة"
+            title={t('favorite')}
           ><Star size={18} /></button>
-          <button className="small-icon-button" type="button" onClick={() => void share()} title="مشاركة المثال">
+          <button className="small-icon-button" type="button" onClick={() => void share()} title={t('shareExample')}>
             <Share2 size={18} />
           </button>
         </div>
@@ -134,20 +137,20 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
           <h3 lang="nl" dir="ltr">{example.title}</h3>
         </div>
         <span className={`mode-badge mode-badge--${example.mode}`}>
-          {example.mode === 'multiple-choice' ? 'اختيارات أصلية' : 'تقييم ذاتي'}
+          {example.mode === 'multiple-choice' ? t('originalChoices') : t('selfCheck')}
         </span>
       </div>
 
       <section className="question-panel library-prompt">
-        <small>في النص قد تأتي بهذا الشكل</small>
+        <small>{t('textMaySay')}</small>
         <p lang="nl" dir="ltr">{primaryPair.left}</p>
-        <span>اختر العبارة التي تحمل المعنى نفسه في السؤال أو الجواب.</span>
+        <span>{t('chooseSameMeaning')}</span>
       </section>
 
       <div className="meaning-choice-panel">
         <div className="meaning-choice-panel__head">
-          <strong>ما العبارة الأقرب؟</strong>
-          <span>{answered ? (correct ? 'صحيح' : 'جرّب مرة أخرى') : '3 اختيارات'}</span>
+          <strong>{t('whichPhraseMatches')}</strong>
+          <span>{answered ? (correct ? t('correct') : t('tryAgain')) : t('chooseThree')}</span>
         </div>
         <div className="meaning-options">
           {options.map((option) => {
@@ -171,13 +174,13 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
         {answered && !correct && (
           <div className="feedback feedback--wrong" role="status">
             <XCircle size={21} />
-            <div><strong>ليست الأقرب</strong><p>الكلمات قد تبدو قريبة، لكن المطلوب هو المعنى نفسه. اختر مرة أخرى.</p></div>
+            <div><strong>{t('notClosest')}</strong><p>{t('sameIdeaNotSimilarWord')}</p></div>
           </div>
         )}
         {correct && (
           <div className="feedback feedback--correct" role="status">
             <CheckCircle2 size={21} />
-            <div><strong>صحيح</strong><p>{example.meaning}</p></div>
+            <div><strong>{t('correct')}</strong><p>{meaning}</p></div>
           </div>
         )}
       </div>
@@ -185,18 +188,18 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
       {revealed ? (
         <div className="reveal-stack">
           <section className="question-panel">
-            <small>السؤال الأصلي</small>
+            <small>{t('originalQuestion')}</small>
             <p lang="nl" dir="ltr">{example.question}</p>
           </section>
 
           <section className="answer-panel">
-            <small>الإجابة المعتمدة</small>
+            <small>{t('officialAnswer')}</small>
             <p lang="nl" dir="ltr">{example.answer}</p>
           </section>
 
           {example.options.length > 0 && (
             <section className="option-review">
-              <h4>الاختيارات الأصلية</h4>
+              <h4>{t('originalChoices')}</h4>
               <div className="option-review__list">
                 {example.options.map((option) => {
                   const correct = option.label === example.correctOption;
@@ -204,63 +207,63 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
                     <div key={option.label} className={`review-option${correct ? ' is-correct' : ''}`}>
                       <span>{option.label}</span>
                       <p lang="nl" dir="ltr">{option.text}</p>
-                      <small>{correct ? 'الإجابة الرسمية' : 'غير مطابق لمفتاح الإجابة الرسمي'}</small>
+                      <small>{correct ? t('officialKeyAnswer') : t('notOfficialKey')}</small>
                     </div>
                   );
                 })}
               </div>
-              <p className="honesty-note">لا يضيف الموقع سببًا مخترعًا لكل مشتّت؛ الدليل أدناه هو المرجع للحكم.</p>
+              <p className="honesty-note">{t('noInventedDistractors')}</p>
             </section>
           )}
 
           <section className="evidence-grid">
             <div className="evidence-box">
-              <small>الدليل من النص</small>
+              <small>{t('evidenceFromText')}</small>
               <p lang="nl" dir="ltr">{example.evidence}</p>
             </div>
             <div className="evidence-box evidence-box--accent">
-              <small>الرابط المعنوي</small>
+              <small>{t('meaningLink')}</small>
               <p lang="nl" dir="ltr">{primaryPair.left} ↔ {primaryPair.right}</p>
             </div>
           </section>
 
           <section className="arabic-explanation">
-            <div><strong>المعنى بالعربية</strong><p>{example.meaning}</p></div>
-            <div><strong>كيف وجدت الإجابة؟</strong><p>{example.explanation}</p></div>
+            <div><strong>{t('meaning')}</strong><p>{meaning}</p></div>
+            <div><strong>{t('explanation')}</strong><p>{explanation}</p></div>
           </section>
 
           <div className="source-and-word">
             <SourceLink example={example} />
             <div className="unknown-word-entry">
-              <label htmlFor={`word-${example.id}`}>كلمة لم أفهمها</label>
+              <label htmlFor={`word-${example.id}`}>{t('unknownWord')}</label>
               <div>
                 <input
                   id={`word-${example.id}`}
                   value={word}
                   onChange={(event) => setWord(event.target.value)}
-                  placeholder="اكتب الكلمة الهولندية"
+                  placeholder={t('dutchWordPlaceholder')}
                   lang="nl"
                   dir="ltr"
                 />
                 <button className="button button--secondary" type="button" onClick={() => void saveWord()}>
-                  حفظ
+                  {t('save')}
                 </button>
               </div>
             </div>
           </div>
 
           <button className="collapse-button" type="button" onClick={() => setRevealed(false)}>
-            <EyeOff size={16} /> إخفاء الجواب مرة أخرى
+            <EyeOff size={16} /> {t('hideAnswerAgain')}
           </button>
         </div>
       ) : (
         <div className="hidden-answer-panel hidden-answer-panel--compact">
           <div>
-            <strong>التفاصيل مخفية</strong>
-            <p>اختر العبارة الصحيحة أولًا. يمكنك كشف التفاصيل إذا كنت تراجع فقط.</p>
+            <strong>{t('detailsHidden')}</strong>
+            <p>{t('chooseFirstReveal')}</p>
           </div>
           <button className="button button--secondary" type="button" onClick={() => void revealDetails()}>
-            كشف الشرح
+            {t('revealExplanation')}
           </button>
         </div>
       )}
@@ -271,19 +274,19 @@ export function StudyCard({ example, forceOpen = false }: { example: Example; fo
           type="button"
           onClick={() => void toggle(example.id, 'mastered')}
           aria-pressed={progress.mastered}
-        ><Check size={17} /> {progress.mastered ? 'متقنة' : 'تعلّمتها'}</button>
+        ><Check size={17} /> {progress.mastered ? t('learnedDone') : t('learned')}</button>
         <button
           className={`learning-toggle${progress.review ? ' is-active is-review' : ''}`}
           type="button"
           onClick={() => void toggle(example.id, 'review')}
           aria-pressed={progress.review}
-        ><RotateCcw size={17} /> {progress.review ? 'ضمن المراجعة' : 'تحتاج مراجعة'}</button>
+        ><RotateCcw size={17} /> {progress.review ? t('inReview') : t('addReview')}</button>
         <button
           className={`learning-toggle${progress.favorite ? ' is-active' : ''}`}
           type="button"
           onClick={() => void toggle(example.id, 'favorite')}
           aria-pressed={progress.favorite}
-        ><Bookmark size={17} /> {progress.favorite ? 'محفوظة' : 'حفظ'}</button>
+        ><Bookmark size={17} /> {progress.favorite ? t('saved') : t('save')}</button>
       </footer>
     </article>
   );
