@@ -623,9 +623,33 @@
   .source-reader__text:focus { outline: none; box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--purple-400) 25%, transparent); }
   .source-reader__text p { white-space: pre-wrap; color: var(--ink-2); line-height: 1.95; margin-bottom: 1.15rem; font-size: clamp(1rem, 1.4vw, 1.08rem); max-width: 72ch; }
   .source-reader__text p:first-child { color: var(--ink); font-weight: 780; }
-  .source-reader__pdf { position: relative; min-height: 0; height: 100%; background: #ece8f3; }
-  .source-reader__pdf object,
-  .source-reader__pdf iframe { width: 100%; height: 100%; min-height: 610px; border: 0; background: white; display: block; }
+  .source-reader__pdf { position: relative; min-height: 0; height: 100%; background: #ece8f3; overflow: auto; }
+  .pdf-canvas-viewer { min-height: 100%; background: #ece8f3; }
+  .pdf-canvas-viewer__stage { position: relative; display: grid; place-items: start center; min-height: 100%; padding: 1rem; }
+  .pdf-canvas-viewer canvas { width: min(100%, 1040px); height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: white; box-shadow: var(--shadow-2); }
+  .pdf-canvas-viewer--compact .pdf-canvas-viewer__stage { padding: .75rem .75rem 3.4rem; }
+  .pdf-canvas-viewer--compact canvas { width: min(100%, 760px); }
+  .pdf-canvas-viewer__state {
+    position: absolute;
+    inset: 1rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: .55rem;
+    min-height: 260px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .94);
+    color: var(--ink-2);
+    text-align: center;
+    padding: 1rem;
+    box-shadow: var(--shadow-1);
+  }
+  .pdf-canvas-viewer__state svg { color: var(--purple-700); }
+  .pdf-canvas-viewer__state--error { color: var(--ink); }
+  .pdf-canvas-viewer__state--error svg { color: var(--danger); }
+  .pdf-canvas-viewer__state--error p { max-width: 36rem; color: var(--muted); }
+  .pdf-canvas-viewer__actions { display: flex; justify-content: center; gap: .55rem; flex-wrap: wrap; margin-top: .4rem; }
   .pdf-page-note { position: absolute; inset-inline-start: .6rem; inset-block-start: .6rem; margin: 0; border-radius: 8px; background: rgba(255, 255, 255, .94); color: var(--ink); padding: .4rem .6rem; font-size: .78rem; box-shadow: var(--shadow-1); }
   .pdf-fallback { position: absolute; inset-inline: .6rem; inset-block-end: .6rem; margin: 0; border-radius: 10px; background: rgba(46, 16, 101, .92); color: white; padding: .55rem .75rem; font-size: .78rem; text-align: center; box-shadow: var(--shadow-2); }
   .reader-fallback { display: grid; place-items: center; min-height: 280px; text-align: center; color: var(--muted); }
@@ -659,9 +683,8 @@
   .pdf-viewer-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .8rem clamp(1rem, 3vw, 2rem); border-bottom: 1px solid var(--line); background: var(--surface); }
   .pdf-viewer-toolbar h1 { margin: 0; font-size: 1.05rem; }
   .pdf-viewer-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .45rem; }
-  .pdf-viewer-frame { position: relative; min-height: 70vh; }
-  .pdf-viewer-frame object,
-  .pdf-viewer-frame iframe { width: 100%; height: calc(100vh - 78px); border: 0; display: block; background: white; }
+  .pdf-viewer-frame { position: relative; min-height: 70vh; height: calc(100vh - 78px); overflow: auto; background: #ece8f3; }
+  .pdf-viewer-frame .pdf-canvas-viewer { min-height: 100%; }
 
   .exam-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; }
   .exam-heading h1 { margin-top: .25rem; }
@@ -708,7 +731,8 @@
     .coverage-banner { grid-template-columns: 1fr; }
     .source-reader__header { flex-direction: column; }
     .source-reader__actions { width: 100%; justify-content: space-between; }
-    .source-reader__pdf iframe { min-height: 65dvh; }
+    .source-reader__pdf { min-height: 65dvh; }
+    .pdf-canvas-viewer__actions { display: grid; width: 100%; }
     .exam-heading__controls { display: grid; }
     .model-card__actions { display: grid; }
     .model-card__actions > * { width: 100%; }

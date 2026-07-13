@@ -1,209 +1,172 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, ChevronLeft, ChevronRight, ExternalLink, LoaderCircle, Minus, Plus, RotateCcw } from 'lucide-react';
-import { GlobalWorkerOptions, getDocument, type PDFDocumentProxy, type RenderTask } from 'pdfjs-dist';
-import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import { useEffect, useRef, useState } from 'react';
+import { AlertTriangle, ExternalLink, RefreshCw } from 'lucide-react';
+import {
+  GlobalWorkerOptions,
+  getDocument,
+  type PDFDocumentLoadingTask,
+  type PDFDocumentProxy,
+  type PDFPageProxy,
+  type RenderTask,
+} from 'pdfjs-dist';
+import { isPdfRenderCancellation, toSafePdfPage } from './PdfCanvasViewer.utils';
+import { PDF_WORKER_URL } from './PdfCanvasViewer.worker';
 
-GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
+GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
 
 interface PdfCanvasViewerProps {
-  url: string;
+  src: string;
+  page: number;
   title: string;
-  initialPage?: number;
+  compact?: boolean;
 }
 
-const MIN_ZOOM = 0.7;
-const MAX_ZOOM = 2.2;
-const ZOOM_STEP = 0.15;
+interface PdfError {
+  title: string;
+  detail: string;
+}
 
-export function PdfCanvasViewer({ url, title, initialPage = 1 }: PdfCanvasViewerProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const renderTaskRef = useRef<RenderTask | null>(null);
-  const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
-  const [pageNumber, setPageNumber] = useState(Math.max(1, initialPage));
-  const [zoom, setZoom] = useState(1);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [loadingProgress, setLoadingProgress] = useState<number | null>(null);
-  const [isRendering, setIsRendering] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const pageLabel = useMemo(() => {
-    if (!document) return `الصفحة ${pageNumber}`;
-    return `الصفحة ${pageNumber} من ${document.numPages}`;
-  }, [document, pageNumber]);
-
-  useEffect(() => {
-    setPageNumber(Math.max(1, initialPage));
-  }, [initialPage, url]);
-
-  useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const updateWidth = () => setContainerWidth(Math.max(0, stage.clientWidth));
-    updateWidth();
-
-    const observer = new ResizeObserver(updateWidth);
-    observer.observe(stage);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    const loadingTask = getDocument({
-      url,
-      disableAutoFetch: false,
-      disableStream: false,
-      disableRange: false,
-      useWorkerFetch: true,
-    });
-
-    setDocument(null);
-    setError(null);
-    setLoadingProgress(0);
-
-    loadingTask.onProgress = ({ loaded, total }: { loaded: number; total: number }) => {
-      if (cancelled) return;
-      setLoadingProgress(total > 0 ? Math.round((loaded / total) * 100) : null);
+function toPdfError(error: unknown): PdfError {
+  if (isPdfRenderCancellation(error)) {
+    return {
+      title: 'تم إيقاف العرض السابق',
+      detail: 'جار تحديث الصفحة، حاول مرة أخرى إذا لم يظهر الملف.',
     };
-
-    loadingTask.promise
-      .then((pdf) => {
-        if (cancelled) return;
-        setDocument(pdf);
-        setPageNumber((current) => Math.min(Math.max(1, current), pdf.numPages));
-        setLoadingProgress(null);
-      })
-      .catch((reason: unknown) => {
-        if (cancelled) return;
-        const message = reason instanceof Error ? reason.message : 'تعذر تحميل ملف PDF.';
-        setError(message);
-        setLoadingProgress(null);
-      });
-
-    return () => {
-      cancelled = true;
-      renderTaskRef.current?.cancel();
-      renderTaskRef.current = null;
-      void loadingTask.destroy();
-    };
-  }, [url]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!document || !canvas || containerWidth <= 0) return;
-
-    let cancelled = false;
-    renderTaskRef.current?.cancel();
-    setIsRendering(true);
-    setError(null);
-
-    document.getPage(pageNumber)
-      .then((page) => {
-        if (cancelled) return;
-
-        const baseViewport = page.getViewport({ scale: 1 });
-        const availableWidth = Math.max(280, containerWidth - 28);
-        const fitScale = availableWidth / baseViewport.width;
-        const cssScale = Math.max(0.25, fitScale * zoom);
-        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-        const renderViewport = page.getViewport({ scale: cssScale * pixelRatio });
-        const cssViewport = page.getViewport({ scale: cssScale });
-        const context = canvas.getContext('2d', { alpha: false });
-
-        if (!context) throw new Error('تعذر تشغيل عارض PDF في هذا المتصفح.');
-
-        canvas.width = Math.floor(renderViewport.width);
-        canvas.height = Math.floor(renderViewport.height);
-        canvas.style.width = `${Math.floor(cssViewport.width)}px`;
-        canvas.style.height = `${Math.floor(cssViewport.height)}px`;
-
-        const task = page.render({
-          canvas,
-          canvasContext: context,
-          viewport: renderViewport,
-          background: '#ffffff',
-        });
-        renderTaskRef.current = task;
-        return task.promise;
-      })
-      .then(() => {
-        if (!cancelled) setIsRendering(false);
-      })
-      .catch((reason: unknown) => {
-        if (cancelled || (reason instanceof Error && reason.name === 'RenderingCancelledException')) return;
-        const message = reason instanceof Error ? reason.message : 'تعذر عرض صفحة PDF.';
-        setError(message);
-        setIsRendering(false);
-      });
-
-    return () => {
-      cancelled = true;
-      renderTaskRef.current?.cancel();
-      renderTaskRef.current = null;
-    };
-  }, [containerWidth, document, pageNumber, zoom]);
-
-  const goToPage = (nextPage: number) => {
-    if (!document) return;
-    setPageNumber(Math.min(Math.max(1, nextPage), document.numPages));
-  };
-
-  if (error) {
-    return (
-      <div className="pdf-viewer pdf-viewer--error" role="alert">
-        <AlertTriangle size={30} />
-        <div>
-          <strong>تعذر عرض ملف PDF داخل الصفحة</strong>
-          <p>{error}</p>
-          <a className="secondary-button" href={url} target="_blank" rel="noreferrer">
-            <ExternalLink size={16} /> فتح الملف في نافذة جديدة
-          </a>
-        </div>
-      </div>
-    );
   }
 
-  return (
-    <section className="pdf-viewer" aria-label={`عارض PDF: ${title}`}>
-      <div className="pdf-viewer__toolbar" aria-label="أدوات ملف PDF">
-        <div className="pdf-viewer__navigation">
-          <button type="button" onClick={() => goToPage(pageNumber - 1)} disabled={!document || pageNumber <= 1} aria-label="الصفحة السابقة">
-            <ChevronRight size={17} />
-          </button>
-          <span aria-live="polite">{pageLabel}</span>
-          <button type="button" onClick={() => goToPage(pageNumber + 1)} disabled={!document || pageNumber >= document.numPages} aria-label="الصفحة التالية">
-            <ChevronLeft size={17} />
-          </button>
-        </div>
-        <div className="pdf-viewer__zoom">
-          <button type="button" onClick={() => setZoom((value) => Math.max(MIN_ZOOM, +(value - ZOOM_STEP).toFixed(2)))} disabled={zoom <= MIN_ZOOM} aria-label="تصغير">
-            <Minus size={17} />
-          </button>
-          <span>{Math.round(zoom * 100)}%</span>
-          <button type="button" onClick={() => setZoom((value) => Math.min(MAX_ZOOM, +(value + ZOOM_STEP).toFixed(2)))} disabled={zoom >= MAX_ZOOM} aria-label="تكبير">
-            <Plus size={17} />
-          </button>
-          <button type="button" onClick={() => setZoom(1)} aria-label="إعادة التكبير للوضع الافتراضي" title="الحجم الافتراضي">
-            <RotateCcw size={16} />
-          </button>
-        </div>
-      </div>
+  const message = error instanceof Error ? error.message : '';
+  const lowerMessage = message.toLowerCase();
 
-      <div className="pdf-viewer__stage" ref={stageRef} tabIndex={0}>
-        {!document && (
-          <div className="pdf-viewer__loading" role="status">
-            <LoaderCircle className="spin" size={30} />
-            <p>{loadingProgress === null ? 'جارٍ تحميل ملف PDF…' : `جارٍ تحميل ملف PDF… ${loadingProgress}%`}</p>
+  if (lowerMessage.includes('worker')) {
+    return {
+      title: 'تعذر تشغيل عارض PDF',
+      detail: 'تعذر تحميل عامل PDF المحلي. افتح الملف الأصلي أو أعد المحاولة.',
+    };
+  }
+
+  if (lowerMessage.includes('missing') || lowerMessage.includes('404') || lowerMessage.includes('not found')) {
+    return {
+      title: 'ملف PDF غير موجود',
+      detail: 'الرابط لا يعيد ملف PDF صالحًا. افتح الملف الأصلي أو تحقق من وجوده داخل sources.',
+    };
+  }
+
+  if (lowerMessage.includes('invalid') || lowerMessage.includes('corrupt') || lowerMessage.includes('pdf')) {
+    return {
+      title: 'تعذر قراءة ملف PDF',
+      detail: 'قد يكون الملف تالفًا أو أن الاستجابة ليست PDF. جرّب فتح الملف الأصلي.',
+    };
+  }
+
+  return {
+    title: 'تعذر عرض PDF',
+    detail: 'حدث خطأ أثناء تحميل أو رسم الصفحة. أعد المحاولة أو افتح الملف الأصلي.',
+  };
+}
+
+export function PdfCanvasViewer({ src, page, title, compact = false }: PdfCanvasViewerProps) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [error, setError] = useState<PdfError | null>(null);
+  const [visiblePage, setVisiblePage] = useState(1);
+  const [retryKey, setRetryKey] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    let loadingTask: PDFDocumentLoadingTask | null = null;
+    let pdfDocument: PDFDocumentProxy | null = null;
+    let renderTask: RenderTask | null = null;
+
+    async function renderPdfPage() {
+      const canvas = canvasRef.current;
+      if (!canvas) {
+        return;
+      }
+
+      try {
+        setStatus('loading');
+        setError(null);
+
+        loadingTask = getDocument({ url: src });
+        const pdf: PDFDocumentProxy = await loadingTask.promise;
+        pdfDocument = pdf;
+
+        const safePage = toSafePdfPage(page, pdf.numPages);
+        const pdfPage: PDFPageProxy = await pdf.getPage(safePage);
+        const viewport = pdfPage.getViewport({ scale: compact ? 1.15 : 1.45 });
+        const context = canvas.getContext('2d');
+
+        if (!context) {
+          throw new Error('تعذر إنشاء سياق Canvas لعرض PDF.');
+        }
+
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        canvas.style.aspectRatio = `${canvas.width} / ${canvas.height}`;
+
+        renderTask = pdfPage.render({
+          canvas: null,
+          canvasContext: context,
+          viewport,
+        });
+
+        await renderTask.promise;
+
+        if (!cancelled) {
+          setVisiblePage(safePage);
+          setStatus('ready');
+        }
+      } catch (renderError) {
+        if (cancelled || isPdfRenderCancellation(renderError)) {
+          return;
+        }
+
+        if (!cancelled) {
+          setError(toPdfError(renderError));
+          setStatus('error');
+        }
+      }
+    }
+
+    void renderPdfPage();
+
+    return () => {
+      cancelled = true;
+      renderTask?.cancel();
+      void loadingTask?.destroy();
+      void pdfDocument?.cleanup();
+    };
+  }, [compact, page, retryKey, src]);
+
+  return (
+    <div className={`pdf-canvas-viewer${compact ? ' pdf-canvas-viewer--compact' : ''}`}>
+      <div className="pdf-canvas-viewer__stage" aria-busy={status === 'loading'}>
+        <canvas ref={canvasRef} title={title} aria-label={`${title} - صفحة ${visiblePage}`} />
+
+        {status === 'loading' ? (
+          <div className="pdf-canvas-viewer__state">
+            <RefreshCw size={20} />
+            <span>جار تحميل PDF...</span>
           </div>
-        )}
-        {isRendering && document && (
-          <div className="pdf-viewer__rendering" role="status" aria-label="جارٍ عرض الصفحة">
-            <LoaderCircle className="spin" size={22} />
+        ) : null}
+
+        {status === 'error' && error ? (
+          <div className="pdf-canvas-viewer__state pdf-canvas-viewer__state--error">
+            <AlertTriangle size={22} />
+            <strong>{error.title}</strong>
+            <p>{error.detail}</p>
+            <div className="pdf-canvas-viewer__actions">
+              <button type="button" className="button button--primary" onClick={() => setRetryKey((value) => value + 1)}>
+                <RefreshCw size={16} />
+                إعادة المحاولة
+              </button>
+              <a className="button button--secondary" href={src} target="_blank" rel="noopener noreferrer">
+                <ExternalLink size={16} />
+                فتح الملف الأصلي
+              </a>
+            </div>
           </div>
-        )}
-        <canvas ref={canvasRef} aria-label={`${title}، ${pageLabel}`} />
+        ) : null}
       </div>
-    </section>
+    </div>
   );
 }

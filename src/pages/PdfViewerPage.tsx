@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, Download, ExternalLink, FileWarning, X } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { PdfCanvasViewer } from '../components/PdfCanvasViewer';
 import { publicAssetUrl } from '../lib/assetUrl';
 import { sourceDocuments } from '../lib/exams';
 import { usePageMeta } from '../lib/pageMeta';
@@ -66,10 +67,8 @@ export function PdfViewerPage() {
         </div>
       </header>
       <div className="pdf-viewer-frame">
-        <object data={`${pdfUrl}#page=${page}&view=FitH`} type="application/pdf" title={pdfTitle}>
-          <iframe src={`${pdfUrl}#page=${page}&view=FitH`} title={pdfTitle} />
-        </object>
-        <p className="pdf-page-note">إذا فتح المتصفح الملف من الصفحة الأولى، انتقل يدويًا إلى الصفحة {page}.</p>
+        <PdfCanvasViewer src={pdfUrl} page={page} title={pdfTitle} />
+        <p className="pdf-page-note">يعرض العارض الصفحة المطلوبة مباشرة داخل الموقع. إذا ظهر خطأ، افتح الملف الأصلي من الأعلى.</p>
       </div>
     </section>
   );

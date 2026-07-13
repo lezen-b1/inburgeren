@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ExternalLink, FileText, Maximize2, ScrollText } from 'lucide-react';
+import { PdfCanvasViewer } from './PdfCanvasViewer';
 import { sourceDocuments, type ExamSection } from '../lib/exams';
 import { publicAssetUrl } from '../lib/assetUrl';
 
@@ -55,10 +56,8 @@ export function SourceReader({ section, sourceUrl, title, compact = false }: Sou
         </div>
       ) : (
         <div className="source-reader__pdf">
-          <object key={pdfUrl} data={pdfUrl} type="application/pdf" title={`PDF: ${title}`}>
-            <iframe src={pdfUrl} title={`PDF: ${title}`} loading="lazy" />
-          </object>
-          <p className="pdf-page-note">إذا فُتح الملف من بدايته، انتقل إلى الصفحة {page}.</p>
+          <PdfCanvasViewer src={pdfUrl} page={page} title={`PDF: ${title}`} compact />
+          <p className="pdf-page-note">PDF الأصلي - صفحة {page}</p>
           <a className="pdf-fallback" href={pdfUrl} target="_blank" rel="noreferrer">
             إذا لم يظهر PDF على هاتفك، اضغط هنا لفتحه في نافذة جديدة.
           </a>
