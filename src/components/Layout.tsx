@@ -17,7 +17,7 @@ import {
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useToast } from '../lib/ToastContext';
 
-const APP_RELEASE = 'v18 - package-lock متوافق مع npm 10';
+const APP_RELEASE = 'v19 - توافق PdfReaderPage';
 
 const navItems = [
   { to: '/home', label: 'الرئيسية', icon: Home },

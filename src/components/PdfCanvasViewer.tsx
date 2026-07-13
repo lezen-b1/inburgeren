@@ -14,8 +14,10 @@ import { PDF_WORKER_URL } from './PdfCanvasViewer.worker';
 GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
 
 interface PdfCanvasViewerProps {
-  src: string;
-  page: number;
+  src?: string;
+  url?: string;
+  page?: number;
+  initialPage?: number;
   title: string;
   compact?: boolean;
 }
@@ -63,12 +65,14 @@ function toPdfError(error: unknown): PdfError {
   };
 }
 
-export function PdfCanvasViewer({ src, page, title, compact = false }: PdfCanvasViewerProps) {
+export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = false }: PdfCanvasViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [error, setError] = useState<PdfError | null>(null);
   const [visiblePage, setVisiblePage] = useState(1);
   const [retryKey, setRetryKey] = useState(0);
+  const pdfUrl = src ?? url ?? '';
+  const requestedPage = page ?? initialPage ?? 1;
 
   useEffect(() => {
     let cancelled = false;
@@ -86,11 +90,11 @@ export function PdfCanvasViewer({ src, page, title, compact = false }: PdfCanvas
         setStatus('loading');
         setError(null);
 
-        loadingTask = getDocument({ url: src });
+        loadingTask = getDocument({ url: pdfUrl });
         const pdf: PDFDocumentProxy = await loadingTask.promise;
         pdfDocument = pdf;
 
-        const safePage = toSafePdfPage(page, pdf.numPages);
+        const safePage = toSafePdfPage(requestedPage, pdf.numPages);
         const pdfPage: PDFPageProxy = await pdf.getPage(safePage);
         const viewport = pdfPage.getViewport({ scale: compact ? 1.15 : 1.45 });
         const context = canvas.getContext('2d');
@@ -135,7 +139,7 @@ export function PdfCanvasViewer({ src, page, title, compact = false }: PdfCanvas
       void loadingTask?.destroy();
       void pdfDocument?.cleanup();
     };
-  }, [compact, page, retryKey, src]);
+  }, [compact, pdfUrl, requestedPage, retryKey]);
 
   return (
     <div className={`pdf-canvas-viewer${compact ? ' pdf-canvas-viewer--compact' : ''}`}>
@@ -159,7 +163,7 @@ export function PdfCanvasViewer({ src, page, title, compact = false }: PdfCanvas
                 <RefreshCw size={16} />
                 إعادة المحاولة
               </button>
-              <a className="button button--secondary" href={src} target="_blank" rel="noopener noreferrer">
+              <a className="button button--secondary" href={pdfUrl} target="_blank" rel="noopener noreferrer">
                 <ExternalLink size={16} />
                 فتح الملف الأصلي
               </a>
