@@ -1,0 +1,1 @@
+function e(e,t=`/inburgeren/`){if(/^(https?:|data:|blob:)/i.test(e)||e.startsWith(`/`))return e;let n=t;return`${n.endsWith(`/`)?n:`${n}/`}${e.replace(/^\.\//,``)}`}export{e as t};
