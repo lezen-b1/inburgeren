@@ -15,19 +15,20 @@ import {
   Sun,
 } from 'lucide-react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
+import { useI18n } from '../lib/i18n';
 import { useToast } from '../lib/ToastContext';
 
-const APP_RELEASE = 'v19 - توافق PdfReaderPage';
+const APP_RELEASE = 'v20 - مكتبة موسعة وPDF أصلي';
 
 const navItems = [
-  { to: '/home', label: 'الرئيسية', icon: Home },
-  { to: '/library', label: 'المكتبة', icon: BookOpenText },
-  { to: '/models', label: 'النماذج', icon: Files },
-  { to: '/train', label: 'التدريب', icon: GraduationCap },
-  { to: '/phrases', label: 'لعبة المعنى', icon: Gamepad2 },
-  { to: '/progress', label: 'التقدم', icon: BarChart3 },
-  { to: '/sources', label: 'المصادر', icon: ShieldCheck },
-  { to: '/settings', label: 'الإعدادات', icon: Settings },
+  { to: '/home', labelKey: 'home', icon: Home },
+  { to: '/library', labelKey: 'library', icon: BookOpenText },
+  { to: '/models', labelKey: 'models', icon: Files },
+  { to: '/train', labelKey: 'training', icon: GraduationCap },
+  { to: '/phrases', labelKey: 'phrases', icon: Gamepad2 },
+  { to: '/progress', labelKey: 'progress', icon: BarChart3 },
+  { to: '/sources', labelKey: 'sources', icon: ShieldCheck },
+  { to: '/settings', labelKey: 'settings', icon: Settings },
 ];
 
 type Theme = 'light' | 'dark' | 'system';
@@ -40,6 +41,7 @@ function applyTheme(theme: Theme) {
 }
 
 export function Layout({ children }: { children: ReactNode }) {
+  const { t } = useI18n();
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('nt2-theme') as Theme | null) ?? 'system');
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const { showToast } = useToast();
@@ -94,22 +96,22 @@ export function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="app-shell">
-      <a className="skip-link" href="#main-content">انتقل إلى المحتوى</a>
+      <a className="skip-link" href="#main-content">{t('skip')}</a>
       <header className="topbar">
         <div className="shell topbar__inner">
           <NavLink to="/home" className="brand" aria-label="NT2 Lezen B1">
             <span className="brand__mark">NT2</span>
             <span className="brand__copy">
               <strong>Lezen B1</strong>
-              <small>Official Exams 2023–2025</small>
+              <small>{t('brandSmall')}</small>
             </span>
           </NavLink>
 
           <nav className="main-nav" aria-label="التنقل الرئيسي">
-            {navItems.map(({ to, label, icon: Icon }) => (
+            {navItems.map(({ to, labelKey, icon: Icon }) => (
               <NavLink key={to} to={to} className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`}>
                 <Icon size={18} aria-hidden="true" />
-                <span>{label}</span>
+                <span>{t(labelKey)}</span>
               </NavLink>
             ))}
           </nav>
@@ -117,7 +119,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <div className="topbar__actions">
             <button className="icon-button" type="button" onClick={install} title="تثبيت التطبيق">
               <Download size={19} aria-hidden="true" />
-              <span>تثبيت</span>
+              <span>{t('install')}</span>
             </button>
             <button
               className="icon-button"
@@ -126,7 +128,7 @@ export function Layout({ children }: { children: ReactNode }) {
               title={`المظهر الحالي: ${theme}`}
             >
               <ThemeIcon size={19} aria-hidden="true" />
-              <span>المظهر</span>
+              <span>{t('theme')}</span>
             </button>
           </div>
         </div>
@@ -135,13 +137,13 @@ export function Layout({ children }: { children: ReactNode }) {
       {needRefresh && (
         <div className="update-banner" role="status">
           <div className="shell update-banner__inner">
-            <span>يتوفر إصدار أحدث من الموقع.</span>
+            <span>{t('updateAvailable')}</span>
             <div>
               <button className="button button--light" onClick={() => void updateServiceWorker(true)}>
-                <RefreshCw size={16} aria-hidden="true" /> تحديث الآن
+                <RefreshCw size={16} aria-hidden="true" /> {t('updateNow')}
               </button>
               <button className="button button--ghost-light" onClick={() => setNeedRefresh(false)}>
-                لاحقًا
+                {t('later')}
               </button>
             </div>
           </div>
@@ -153,11 +155,11 @@ export function Layout({ children }: { children: ReactNode }) {
       <footer className="footer">
         <div className="shell footer__inner">
           <div>
-            <strong>NT2 Lezen B1 · Parafrase Lab</strong>
-            <p>أداة تدريب غير رسمية مخصصة لنماذج Lezen I للأعوام 2023 و2024 و2025.</p>
+            <strong>{t('footerTitle')}</strong>
+            <p>{t('footerText')}</p>
             <p className="release-note">{APP_RELEASE}</p>
           </div>
-          <p className="local-note">يُحفظ تقدمك محليًا في هذا المتصفح، ويمكن تصديره من الإعدادات.</p>
+          <p className="local-note">{t('localNote')}</p>
         </div>
       </footer>
     </div>

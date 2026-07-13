@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AlertTriangle, ExternalLink, RefreshCw } from 'lucide-react';
+import { AlertTriangle, ExternalLink, FileText, RefreshCw } from 'lucide-react';
 import {
   GlobalWorkerOptions,
   getDocument,
@@ -20,6 +20,7 @@ interface PdfCanvasViewerProps {
   initialPage?: number;
   title: string;
   compact?: boolean;
+  preferCanvas?: boolean;
 }
 
 interface PdfError {
@@ -65,16 +66,24 @@ function toPdfError(error: unknown): PdfError {
   };
 }
 
-export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = false }: PdfCanvasViewerProps) {
+export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = false, preferCanvas = false }: PdfCanvasViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [mode, setMode] = useState<'native' | 'canvas'>(preferCanvas ? 'canvas' : 'native');
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(preferCanvas ? 'loading' : 'ready');
   const [error, setError] = useState<PdfError | null>(null);
   const [visiblePage, setVisiblePage] = useState(1);
   const [retryKey, setRetryKey] = useState(0);
   const pdfUrl = src ?? url ?? '';
   const requestedPage = page ?? initialPage ?? 1;
+  const nativeUrl = `${pdfUrl}#page=${Math.max(1, requestedPage)}&view=FitH`;
 
   useEffect(() => {
+    if (mode !== 'canvas') {
+      setStatus('ready');
+      setError(null);
+      return undefined;
+    }
+
     let cancelled = false;
     let loadingTask: PDFDocumentLoadingTask | null = null;
     let pdfDocument: PDFDocumentProxy | null = null;
@@ -139,21 +148,41 @@ export function PdfCanvasViewer({ src, url, page, initialPage, title, compact = 
       void loadingTask?.destroy();
       void pdfDocument?.cleanup();
     };
-  }, [compact, pdfUrl, requestedPage, retryKey]);
+  }, [compact, mode, pdfUrl, requestedPage, retryKey]);
 
   return (
     <div className={`pdf-canvas-viewer${compact ? ' pdf-canvas-viewer--compact' : ''}`}>
+      <div className="pdf-canvas-viewer__toolbar">
+        <button className={`pdf-mode-button${mode === 'native' ? ' is-active' : ''}`} type="button" onClick={() => setMode('native')}>
+          <FileText size={16} />
+          PDF الأصلي
+        </button>
+        <button className={`pdf-mode-button${mode === 'canvas' ? ' is-active' : ''}`} type="button" onClick={() => setMode('canvas')}>
+          <RefreshCw size={16} />
+          عرض بديل
+        </button>
+        <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
+          <ExternalLink size={16} />
+          فتح الملف الخام
+        </a>
+      </div>
       <div className="pdf-canvas-viewer__stage" aria-busy={status === 'loading'}>
-        <canvas ref={canvasRef} title={title} aria-label={`${title} - صفحة ${visiblePage}`} />
+        {mode === 'native' ? (
+          <object data={nativeUrl} type="application/pdf" title={title} className="pdf-native-object">
+            <iframe src={nativeUrl} title={title} className="pdf-native-object" />
+          </object>
+        ) : (
+          <canvas ref={canvasRef} title={title} aria-label={`${title} - صفحة ${visiblePage}`} />
+        )}
 
-        {status === 'loading' ? (
+        {mode === 'canvas' && status === 'loading' ? (
           <div className="pdf-canvas-viewer__state">
             <RefreshCw size={20} />
             <span>جار تحميل PDF...</span>
           </div>
         ) : null}
 
-        {status === 'error' && error ? (
+        {mode === 'canvas' && status === 'error' && error ? (
           <div className="pdf-canvas-viewer__state pdf-canvas-viewer__state--error">
             <AlertTriangle size={22} />
             <strong>{error.title}</strong>

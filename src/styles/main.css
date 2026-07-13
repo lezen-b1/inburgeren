@@ -625,7 +625,11 @@
   .source-reader__text p:first-child { color: var(--ink); font-weight: 780; }
   .source-reader__pdf { position: relative; min-height: 0; height: 100%; background: #ece8f3; overflow: auto; }
   .pdf-canvas-viewer { min-height: 100%; background: #ece8f3; }
+  .pdf-canvas-viewer__toolbar { position: sticky; inset-block-start: 0; z-index: 3; display: flex; align-items: center; justify-content: center; gap: .45rem; flex-wrap: wrap; padding: .55rem; background: color-mix(in srgb, var(--surface) 94%, transparent); border-bottom: 1px solid var(--line); backdrop-filter: blur(12px); }
+  .pdf-canvas-viewer__toolbar a, .pdf-mode-button { min-height: 34px; display: inline-flex; align-items: center; gap: .35rem; border-radius: 8px; padding-inline: .65rem; color: var(--ink-2); background: transparent; font-weight: 760; font-size: .8rem; }
+  .pdf-canvas-viewer__toolbar a:hover, .pdf-mode-button:hover, .pdf-mode-button.is-active { background: var(--purple-100); color: var(--purple-900); }
   .pdf-canvas-viewer__stage { position: relative; display: grid; place-items: start center; min-height: 100%; padding: 1rem; }
+  .pdf-native-object { width: 100%; height: min(78dvh, 980px); min-height: 610px; border: 0; display: block; background: white; }
   .pdf-canvas-viewer canvas { width: min(100%, 1040px); height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: white; box-shadow: var(--shadow-2); }
   .pdf-canvas-viewer--compact .pdf-canvas-viewer__stage { padding: .75rem .75rem 3.4rem; }
   .pdf-canvas-viewer--compact canvas { width: min(100%, 760px); }
